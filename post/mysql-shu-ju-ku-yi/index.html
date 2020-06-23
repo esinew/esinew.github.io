@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-<title>@bean优化及ThreadLocal - Gridea</title>
+<title>MySQL数据库（一） - Gridea</title>
 <meta name="description" content="温故而知新">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -130,23 +130,103 @@
                     <div class="col-12 col-lg-10">
                       <div class="layout-post-main m-right m-md-right">
                         <div class="layout-post-header">
-                          <h1 class="layout-post-title">@bean优化及ThreadLocal</h1>
+                          <h1 class="layout-post-title">MySQL数据库（一）</h1>
                           <div class="layout-post-meta">
                             <div class="item">
                               
                             </div>
                             <div class="item">
-                              <span>2020-06-23</span>
+                              <span>2020-06-24</span>
                             </div>
                           </div>
                         </div>
                         <div class="layout-post-content">
                           <div class="layout-post-item">
                             
-                            <p class="with-img"><img src="https://esinew.github.io//post-images/bean-you-hua-ji-threadlocal.jpg"
-                                class="attachment-full size-full wp-post-image" alt="@bean优化及ThreadLocal" /></p>
+                            <p class="with-img"><img src="https://esinew.github.io//post-images/mysql-shu-ju-ku-yi.jpg"
+                                class="attachment-full size-full wp-post-image" alt="MySQL数据库（一）" /></p>
                             
-                            <p>[TOC]</p>
+                            <p><strong>mysql默认的存储引擎</strong>：InnoDB</p>
+<p><strong>InnoDB</strong>(其行锁机制和多版本的支持为数据读取和更新的混合操作提供了良好的并发机制)</p>
+<p><strong>MyISAM</strong>表最适合大量的数据读而少量数据更新的混合操作，或者使用压缩的只读表。</p>
+<p><strong>MEMORY</strong>存储引擎适合存储非永久需要的数据，或者能够从基于磁盘的表中重新生成的数据。</p>
+<p>特点：性能强，每次查询具有原子性执行速度快于InnoDB;</p>
+<p><img src="C" alt="存储引擎比较" loading="lazy"><br>
+<img src="https://esinew.github.io//post-images/1592936908979.png" alt="" loading="lazy"><br>
+<strong>ACID特性</strong></p>
+<ol>
+<li>原子性（Atomicity）：要么一起成功，要么一起失败</li>
+<li>一致性（Consistency）：数据不能在结束操作后状态不一样了</li>
+<li>隔离性（Isolation）：事务与事务不相互影响</li>
+<li>持久性（Durability）：数据能被长久的保存</li>
+</ol>
+<p><strong>四个隔离级别</strong></p>
+<ol>
+<li>读未提交</li>
+<li>读已提交（多数SQL默认级别）</li>
+<li>可重复读（MySQL默认级别）(MVCC)</li>
+<li>序列化（串行化）</li>
+</ol>
+<p><img src="C" alt="image-202006" loading="lazy"><br>
+<img src="https://esinew.github.io//post-images/1592937049477.png" alt="" loading="lazy"><br>
+<strong>CAP定理和BASE理论</strong></p>
+<p>CAP：web服务无法同时满足三个属性——一致性、可用性、分区容错性</p>
+<p>BASE:CAP的扩充，基本可用（保大）、软状态（不在意中间过程）、最终一致性（认定目标）</p>
+<p><strong>数据库锁和并发策略</strong></p>
+<p>表锁：读锁、写锁（开销小、加锁快，不会出现死锁、粒度大、易发生锁冲突）</p>
+<p>行锁：共享锁、排他锁（Update、Delet、insert）（select无锁）（开销大、易死锁、粒度最小、不易发生锁冲突）</p>
+<p>​		共享锁：允许一个事务读取一行，阻止其他事务获得相同数据集的共享锁与排他锁。（显示加		锁：select * from table where...for update）</p>
+<p>​		innoDB 的行锁实现方式是基于索引项的。（即使尝试获取不同行的排他锁，若使用了相同的		索引键，也可能造成锁冲突。）</p>
+<p>页级锁：粒度介于行锁和表锁之间，性能折中</p>
+<p><strong>并发策略</strong></p>
+<p>乐观锁：</p>
+<p>悲观锁：</p>
+<p><u><em>减少锁表的概率</em></u></p>
+<p>​	 减少 insert 、update 、delete 语句执行到 commite 之间的时间。具体点批量执行改为单个执	 行、优化 sql 自身的非执行速度  如果异常对事物进行回滚</p>
+<p>登陆系统，做一个主表，一个分表，分表写入不加索引，主表读添加索引（索引是添加B+树（非聚簇——&gt;聚簇）插入费时（维护B+树），读快），最后分表同步到主表上。</p>
+<p><u><em>存储过程优化思路：</em></u></p>
+<pre><code>1.   尽量利用一些 sql 语句来替代一些小循环，例如聚合函数，求平均函数等。  
+2.   中间结果存放于临时表，加索引。 
+3.   少使用游标。sql 是个集合语言，对于集合运算具有较高性能。而 cursors 是过程运算。比如 对一个 100 万行 的数据进行查询。游标需要读表 100 万次，而不使用游标则只需要少量几次 读取。  
+4.   事务越短越好。sqlserver 支持并发操作。如果事务过多过长，或者隔离级别过高，都会造成 并发操作的阻塞， 死锁。导致查询极慢，cpu 占用率极地。
+5.   使用 try-catch 处理错误异常。  
+6.     查找语句尽量不要放在循环内。 
+</code></pre>
+<p>第一范式：有主键，具有原子性，字段不可分割 第二范式：完全依赖，表中非主键列不存在对主键的部分依赖。要求每个表只描述一 件事情。 第三范式：没有传递依赖，表中的列不存在对非主键列的传递依赖。 数据库设计尽量遵循三范式，但是还是根据实际情况进行取舍，有时可能会拿冗余换速度，最终用目的要满足客户 需求</p>
+<p><u><em>7.2 数据库命令规范</em></u><br>
+ 所有数据库对象名称必须使用小写字母并用下划线分割</p>
+<p> 所有数据库对象名称禁止使用 MySQL 保留关键字（如果表名中包含关键字查询时，需要将其用单引号括起来）<br>
+ 数据库对象的命名要能做到见名识意，并且最后不要超过 32 个字符</p>
+<p> 临时库表必须以 tmp 为前缀并以日期为后缀，备份表必须以 bak 为前缀并以日期 (时间戳) 为后缀</p>
+<p> 所有存储相同数据的列名和列类型必须一致（一般作为关联列，如果查询时关联列类型不一致会自动进行数据 类型隐式转换，会造成列上的索引失效，导致查询效率降低）</p>
+
+                          </div>
+                        </div>
+                        <div class="layout-post-social">
+                          <div class="item reader">
+                            <div id="/post/mysql-shu-ju-ku-yi/" class="leancloud-visitors view"
+                              data-flag-title="MySQL数据库（一）">
+                              <span class="post-meta-item-text">阅读 </span>
+                              <span class="leancloud-visitors-count"></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="layout-post-navigation">
+                          <div class="navigation-list">
+                            
+                            <div class="post-card row">
+                              
+                              <div class="card-content col-8 col-md-9">
+                                <div class="card-body">
+                                  <div class="header">
+                                    <a href="https://esinew.github.io/post/bean-you-hua-ji-threadlocal/" class="title">
+                                      <h4>@bean优化及ThreadLocal</h4>
+                                    </a>
+                                  </div>
+                                  <div class="inner d-none d-sm-block">
+                                    <div class="abstract">
+                                      <p>[TOC]</p>
 <h2 id="bean注解及优化方案"><strong>@Bean注解</strong>（及优化方案）</h2>
 <p>银行开户的场景。</p>
 <p>银行需要将用户的信用等级，使用记录信息发送给用户。</p>
@@ -679,64 +759,7 @@ return result;<br>
 return setInitialValue();<br>
 }<br>
 ```</p>
-<!-- more -->
 
-                          </div>
-                        </div>
-                        <div class="layout-post-social">
-                          <div class="item reader">
-                            <div id="/post/bean-you-hua-ji-threadlocal/" class="leancloud-visitors view"
-                              data-flag-title="@bean优化及ThreadLocal">
-                              <span class="post-meta-item-text">阅读 </span>
-                              <span class="leancloud-visitors-count"></span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="layout-post-navigation">
-                          <div class="navigation-list">
-                            
-                            <div class="post-card row">
-                              
-                              <div class="card-content col-8 col-md-9">
-                                <div class="card-body">
-                                  <div class="header">
-                                    <a href="https://esinew.github.io/post/mysql-shu-ju-ku-yi/" class="title">
-                                      <h4>MySQL数据库（一）</h4>
-                                    </a>
-                                  </div>
-                                  <div class="inner d-none d-sm-block">
-                                    <div class="abstract">
-                                      
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="card-footer">
-                                  <div class="item"><span>上一篇</span></div>
-                                  <div class="item">2020-06-24</div>
-                                </div>
-                              </div>
-                              <div class="card-thumb col-4 col-md-3">
-                                <div class="thumb">
-                                  <a href="https://esinew.github.io/post/mysql-shu-ju-ku-yi/"
-                                    style="background-image: url('https://esinew.github.io//post-images/mysql-shu-ju-ku-yi.jpg');"></a>
-                                </div>
-                              </div>
-                              
-                            </div>
-
-                            <div class="post-card row">
-                              
-                              <div class="card-content col-8 col-md-9">
-                                <div class="card-body">
-                                  <div class="header">
-                                    <a href="https://esinew.github.io/post/wei-shi-me-yao-yong-spring-bean/" class="title">
-                                      <h4>为什么要用spring bean？</h4>
-                                    </a>
-                                  </div>
-                                  <div class="inner d-none d-sm-block">
-                                    <div class="abstract">
-                                      
                                     </div>
                                   </div>
                                 </div>
@@ -747,13 +770,12 @@ return setInitialValue();<br>
                               </div>
                               <div class="card-thumb col-4 col-md-3">
                                 <div class="thumb">
-                                  <a href="https://esinew.github.io/post/wei-shi-me-yao-yong-spring-bean/"
-                                    style="background-image: url('https://esinew.github.io//post-images/wei-shi-me-yao-yong-spring-bean.jpg');"></a>
+                                  <a href="https://esinew.github.io/post/bean-you-hua-ji-threadlocal/"
+                                    style="background-image: url('https://esinew.github.io//post-images/bean-you-hua-ji-threadlocal.jpg');"></a>
                                 </div>
                               </div>
                               
                             </div>
-
                             
                           </div>
                         </div>
@@ -766,40 +788,7 @@ return setInitialValue();<br>
                     <div class="col-12 col-lg-2 d-none d-lg-block">
                       <div class="layout-post-sidebar">
                         <div class="layout-sidebar-item">
-                          <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#bean%E6%B3%A8%E8%A7%A3%E5%8F%8A%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88"><strong>@Bean注解</strong>（及优化方案）</a></li>
-<li><a href="#spring-%E5%88%9B%E5%BB%BAbean%E7%9A%84%E6%97%B6%E6%9C%BA"><strong>Spring 创建bean的时机</strong></a></li>
-<li><a href="#spring-bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9Fbean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E4%B8%8D%E5%90%8C%E9%9C%80%E8%A6%81%E8%BF%9B%E8%A1%8C%E9%80%89%E6%8B%A9%E5%8F%8A%E4%BC%98%E5%8C%96"><strong>Spring Bean的作用域</strong>（bean的作用域不同，需要进行选择及优化）</a>
-<ul>
-<li><a href="#u1%E8%A2%AB%E5%A3%B0%E6%98%8E%E4%B8%BAsingletton%E7%9A%84beanu"><strong><u><em>（1）被声明为<code>singletton</code>的bean</em></u></strong></a></li>
-<li><a href="#u2%E8%A2%AB%E5%A3%B0%E6%98%8E%E4%B8%BAprototype%E7%9A%84beanu"><strong><u><em>（2）被声明为prototype的bean</em></u></strong></a></li>
-<li><a href="#u3%E4%BD%BF%E7%94%A8%E6%B3%A8%E8%A7%A3%E5%AE%9A%E4%B9%89bean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9Fu">***<u>（3）使用注解定义bean的作用域</u>***</a></li>
-<li><a href="#u4%E8%AF%B7%E6%B1%82%E4%BD%9C%E7%94%A8%E5%9F%9Fu">***<u>（4）请求作用域</u>***</a></li>
-<li><a href="#u5%E4%BC%9A%E8%AF%9D%E4%BD%9C%E7%94%A8%E5%9F%9Fu">***<u>（5）会话作用域</u>***</a></li>
-<li><a href="#u6%E5%85%A8%E5%B1%80%E4%BD%9C%E7%94%A8%E5%9F%9Fu">***<u>（6）全局作用域</u>***</a></li>
-<li><a href="#7%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BD%9C%E7%94%A8%E5%9F%9F">***（7）自定义作用域***</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#spring%E7%9A%84%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%E6%9C%89%E7%8A%B6%E6%80%81bean%E5%92%8C%E6%97%A0%E7%8A%B6%E6%80%81bean">Spring的并发问题——有状态Bean和无状态Bean</a></li>
-<li><a href="#threadlocal%E4%BD%9C%E7%94%A8-%E5%9C%BA%E6%99%AF-%E5%8E%9F%E7%90%86%E8%A7%A3%E5%86%B3bean%E5%85%B1%E4%BA%AB%E4%BD%9C%E7%94%A8%E5%9F%9F%E8%B5%84%E6%BA%90%E5%8D%A0%E7%94%A8%E5%8F%8A%E7%BA%BF%E7%A8%8B%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98">ThreadLocal作用、场景、原理*（解决bean共享作用域资源占用及线程冲突问题）*</a><br>
-*
-<ul>
-<li><a href="#1threadlocal-%E6%98%AF%E4%BB%80%E4%B9%88">1.ThreadLocal 是什么？</a></li>
-<li><a href="#11threadlocal-%E7%9A%84%E4%BD%9C%E7%94%A8">1.1.ThreadLocal 的作用？</a></li>
-<li><a href="#2android%E6%BA%90%E7%A0%81%E4%B8%AD%E4%B9%9F%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0threadlocal%E7%9A%84%E8%BA%AB%E5%BD%B1">2.Android源码中也可以看到ThreadLocal的身影</a></li>
-<li><a href="#21-looper-%E5%86%85%E9%83%A8%E7%9A%84%E5%85%B3%E4%BA%8E%E5%9C%A8-threadlocal-%E4%B8%AD%E5%AD%98%E5%82%A8-looper-%E5%92%8C-%E8%8E%B7%E5%8F%96-looper-%E7%9A%84%E6%BA%90%E7%A0%81">2.1. Looper 内部的关于在 ThreadLocal 中存储 Looper 和 获取 Looper 的源码。</a></li>
-<li><a href="#3threadlocal%E7%9A%84%E5%86%85%E9%83%A8%E5%8E%9F%E7%90%86">3.ThreadLocal的内部原理</a></li>
-<li><a href="#31%E5%85%88%E7%9C%8B%E4%B8%8Bget%E6%96%B9%E6%B3%95%E6%BA%90%E7%A0%81%E7%9A%84%E5%AE%9E%E7%8E%B0">3.1.先看下get方法源码的实现</a></li>
-<li><a href="#%E5%BE%97%E5%87%BA%E7%BB%93%E8%AE%BA">得出结论</a></li>
-<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
-</ul>
-</li>
-</ul>
-
+                          
                         </div>
                       </div>
                     </div>
