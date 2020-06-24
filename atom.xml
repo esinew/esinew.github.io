@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://esinew.github.io/</id>
     <title>每一步都是新生</title>
-    <updated>2020-06-24T01:49:56.807Z</updated>
+    <updated>2020-06-24T01:53:38.316Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://esinew.github.io/"/>
     <link rel="self" href="https://esinew.github.io/atom.xml"/>
@@ -27,8 +27,9 @@
 以上四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。<br>
 隔离级别 脏读 不可重复读 幻读读取未提交内容 v v v读取已提交内容 x v v 可重复读 x x v 可串行化 x x x<br>
 修改MySQL隔离级别：</p>
-<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em></p>
-<figure data-type="image" tabindex="1"><img src="C:%5CUsers%5Cdell%5CAppData%5CLocal%5CTemp%5CCSDN_1591409202681.jpg" alt="CSDN_1591409202681" loading="lazy"></figure>
+<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em><br>
+<img src="https://esinew.github.io//post-images/1592963600641.jpg" alt="" loading="lazy"><br>
+![CSDN_1591409202681](![](https://esinew.github.io//post-images/15</p>
 <p>修改完成后重启mysql，使其生效：</p>
 <p><u><em>sudo service mysql restart</em></u></p>
 <p><strong>Django提供了一个API来控制数据库事务</strong></p>
@@ -121,8 +122,9 @@
 以上四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。<br>
 隔离级别 脏读 不可重复读 幻读读取未提交内容 v v v读取已提交内容 x v v 可重复读 x x v 可串行化 x x x<br>
 修改MySQL隔离级别：</p>
-<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em></p>
-<figure data-type="image" tabindex="1"><img src="C:%5CUsers%5Cdell%5CAppData%5CLocal%5CTemp%5CCSDN_1591409202681.jpg" alt="CSDN_1591409202681" loading="lazy"></figure>
+<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em><br>
+<img src="https://esinew.github.io//post-images/1592963600641.jpg" alt="" loading="lazy"><br>
+![CSDN_1591409202681](https://esinew.github.io//post-images/15</p>
 <p>修改完成后重启mysql，使其生效：</p>
 <p><u><em>sudo service mysql restart</em></u></p>
 <p><strong>Django提供了一个API来控制数据库事务</strong></p>
