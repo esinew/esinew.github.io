@@ -33,7 +33,7 @@
 						<div class="logo">
 							<a href="https://esinew.github.io/">
 								<img class="logo"
-									src="https://esinew.github.io//media/images/site_avatar.png?v=1592963607481"
+									src="https://esinew.github.io//media/images/site_avatar.png?v=1592963782271"
 									alt="">
 							</a>
 						</div>
@@ -72,7 +72,7 @@
 							<div class="search-lightbox">
 								<div class="search-body">
 
-									<form id="gridea-search-form" data-update="1592963607481" action="/search/" class="search-form">
+									<form id="gridea-search-form" data-update="1592963782271" action="/search/" class="search-form">
 										<input type="text" name="q" id="s" value="" class="search-field" placeholder="请输入搜索关键词" aria-label="请输入搜索关键词" required="">
 										<button type="submit" class="submit" aria-label="Submit">
 											<i class="fa fa-search" aria-hidden="true"></i>
@@ -157,10 +157,9 @@
 以上四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。<br>
 隔离级别 脏读 不可重复读 幻读读取未提交内容 v v v读取已提交内容 x v v 可重复读 x x v 可串行化 x x x<br>
 修改MySQL隔离级别：</p>
-<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em><br>
-<img src="https://esinew.github.io//post-images/1592963600641.jpg" alt="" loading="lazy"><br>
-![CSDN_1591409202681](https://esinew.github.io//post-images/15</p>
-<p>修改完成后重启mysql，使其生效：</p>
+<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em></p>
+<p><img src="https://esinew.github.io//post-images/1592963778005.jpg" alt="" loading="lazy"><br>
+修改完成后重启mysql，使其生效：</p>
 <p><u><em>sudo service mysql restart</em></u></p>
 <p><strong>Django提供了一个API来控制数据库事务</strong></p>
 <p><u><em>atomic(using=None, savepoint=True)</em></u></p>
