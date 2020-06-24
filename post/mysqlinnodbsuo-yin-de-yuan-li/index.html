@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-<title>mysql事务隔离级别及MVCC - 每一步都是新生</title>
+<title>Mysql(InnoDB)索引的原理 - 每一步都是新生</title>
 <meta name="description" content="温故而知新">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -130,7 +130,7 @@
                     <div class="col-12 col-lg-10">
                       <div class="layout-post-main m-right m-md-right">
                         <div class="layout-post-header">
-                          <h1 class="layout-post-title">mysql事务隔离级别及MVCC</h1>
+                          <h1 class="layout-post-title">Mysql(InnoDB)索引的原理</h1>
                           <div class="layout-post-meta">
                             <div class="item">
                               
@@ -143,10 +143,143 @@
                         <div class="layout-post-content">
                           <div class="layout-post-item">
                             
-                            <p class="with-img"><img src="https://esinew.github.io//post-images/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc.png"
-                                class="attachment-full size-full wp-post-image" alt="mysql事务隔离级别及MVCC" /></p>
+                            <p class="with-img"><img src="https://esinew.github.io//post-images/mysqlinnodbsuo-yin-de-yuan-li.jpg"
+                                class="attachment-full size-full wp-post-image" alt="Mysql(InnoDB)索引的原理" /></p>
                             
-                            <p>MySQL定义了4类隔离级别，包括一些具体规则，用来限定事物内外的哪些改变时可见的，哪些改变时不可见的，低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
+                            <p>(转载作者：孤独烟 出处： http://rjzheng.cnblogs.com/)</p>
+<h2 id="引言">引言</h2>
+<p>回想四年前，我在学习mysql的索引这块的时候，老师在讲索引的时候，是像下面这么说的</p>
+<blockquote>
+<p><strong>索引就像一本书的目录。而当用户通过索引查找数据时，就好比用户通过目录查询某章节的某个知识点。这样就帮助用户有效地提高了查找速度。所以，使用索引可以有效地提高数据库系统的整体性能。</strong></p>
+</blockquote>
+<p>嗯，这么说其实也对。但是呢，大家看完这种说法，其实可能还是觉得太抽象了！因此呢，我还想再深入的细说一下，所以就有了此文！<br>
+需要说明的是，我说的内容只在Mysql的Innodb引擎中是成立的。在Sql Server、oracle、Mysql的Mysiam引擎中的正确性，不一定成立！<br>
+OK，废话不多说，开始啰嗦!</p>
+<h2 id="正文">正文</h2>
+<h3 id="索引的科普">索引的科普</h3>
+<p>先引进聚簇索引和非聚簇索引的概念！<br>
+我们平时在使用的Mysql中，使用下述语句</p>
+<pre><code>CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
+    [USING index_type]
+    ON tbl_name (index_col_name,...)
+ 
+index_col_name:
+    col_name [(length)] [ASC | DESC]
+</code></pre>
+<p>创建的索引，如复合索引、前缀索引、唯一索引，都是属于非聚簇索引，在有的书籍中，又将其称为辅助索引(secondary index)。在后文中，我们称其为非聚簇索引，其数据结构为B+树。</p>
+<p>那么，这个聚簇索引，在Mysql中是没有语句来另外生成的。在Innodb中，Mysql中的数据是按照主键的顺序来存放的。那么聚簇索引就是按照每张表的主键来构造一颗B+树，叶子节点存放的就是整张表的行数据。由于表里的数据只能按照一颗B+树排序，因此一张表只能有一个聚簇索引。</p>
+<p>在Innodb中，聚簇索引默认就是主键索引。<br>
+这个时候，机智的读者，应该要问我</p>
+<blockquote>
+<p><strong>如果我的表没建主键呢？</strong></p>
+</blockquote>
+<p>回答是，如果没有主键，则按照下列规则来建聚簇索引</p>
+<ul>
+<li>没有主键时，会用一个唯一且不为空的索引列做为主键，成为此表的聚簇索引</li>
+<li>如果没有这样的索引，InnoDB会隐式定义一个主键来作为聚簇索引。</li>
+</ul>
+<p><code>ps</code>:大家还记得，自增主键和uuid作为主键的区别么？由于主键使用了聚簇索引，如果主键是自增id，，那么对应的数据一定也是相邻地存放在磁盘上的，写入性能比较高。如果是uuid的形式，频繁的插入会使innodb频繁地移动磁盘块，写入性能就比较低了。</p>
+<h3 id="索引原理介绍">索引原理介绍</h3>
+<p>先来一张带主键的表，如下所示，pId是主键</p>
+<table>
+<thead>
+<tr>
+<th>pId</th>
+<th>name</th>
+<th>birthday</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>zhangsan</td>
+<td>2016-10-02</td>
+</tr>
+<tr>
+<td>8</td>
+<td>lisi</td>
+<td>2015-10-04</td>
+</tr>
+<tr>
+<td>11</td>
+<td>wangwu</td>
+<td>2016-09-02</td>
+</tr>
+<tr>
+<td>13</td>
+<td>zhaoliu</td>
+<td>2015-10-07</td>
+</tr>
+</tbody>
+</table>
+<p>画出该表的结构图如下<br>
+<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index01.png" alt="image" loading="lazy"></p>
+<p>如上图所示，分为上下两个部分，上半部分是由主键形成的B+树，下半部分就是磁盘上真实的数据！那么，当我们， 执行下面的语句</p>
+<pre><code>select * from table where pId='11'
+</code></pre>
+<p>那么，执行过程如下<br>
+<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index02.png" alt="image" loading="lazy"><br>
+如上图所示，从根开始，经过3次查找，就可以找到真实数据。如果不使用索引，那就要在磁盘上，进行逐行扫描，直到找到数据位置。显然，使用索引速度会快。但是在写入数据的时候，需要维护这颗B+树的结构，因此写入性能会下降！<br>
+OK，接下来引入非聚簇索引!我们执行下面的语句</p>
+<pre><code>create index index_name on table(name);
+</code></pre>
+<p>此时结构图如下所示<br>
+<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index04.png" alt="image" loading="lazy"><br>
+大家注意看，会根据你的索引字段生成一颗新的B+树。因此， 我们每加一个索引，就会增加表的体积， 占用磁盘存储空间。然而，<strong>注意看叶子节点</strong>，非聚簇索引的叶子节点并不是真实数据，它的叶子节点依然是索引节点，存放的是该索引字段的值以及对应的主键索引(聚簇索引)。<br>
+如果我们执行下列语句</p>
+<pre><code>select * from table where name='lisi'
+</code></pre>
+<p>此时结构图如下所示<br>
+<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index05.png" alt="image" loading="lazy"><br>
+通过上图红线可以看出，先从非聚簇索引树开始查找，然后找到聚簇索引后。根据聚簇索引，在聚簇索引的B+树上，找到完整的数据！<br>
+那</p>
+<blockquote>
+<p><strong>什么情况不去聚簇索引树上查询呢？</strong></p>
+</blockquote>
+<p>还记得我们的非聚簇索引树上存着该索引字段的值么。如果，此时我们执行下面的语句</p>
+<pre><code>select name from table where name='lisi'
+</code></pre>
+<p>此时结构图如下<br>
+<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index06.png" alt="image" loading="lazy"><br>
+如上图红线所示，如果在非聚簇索引树上找到了想要的值，就不会去聚簇索引树上查询。还记得，博主在<a href="https://www.cnblogs.com/rjzheng/p/9902911.html">《select的正确姿势》</a>提到的索引问题么：</p>
+<blockquote>
+<p><strong>当执行select col from table where col = ?，col上有索引的时候，效率比执行select * from table where col = ? 速度快好几倍！</strong></p>
+</blockquote>
+<p>看完上面的图，你应该对这句话有更深层的理解了。</p>
+<p>那么这个时候，我们执行了下述语句，又会发生什么呢？</p>
+<pre><code>create index index_birthday on table(birthday);
+</code></pre>
+<p>此时结构图如下<br>
+<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index07.png" alt="image" loading="lazy"><br>
+看到了么，多加一个索引，就会多生成一颗非聚簇索引树。因此，很多文章才说，索引不能乱加。因为，有几个索引，就有几颗非聚簇索引树！你在做插入操作的时候，需要同时维护这几颗树的变化！因此，如果索引太多，插入性能就会下降!</p>
+
+                          </div>
+                        </div>
+                        <div class="layout-post-social">
+                          <div class="item reader">
+                            <div id="/post/mysqlinnodbsuo-yin-de-yuan-li/" class="leancloud-visitors view"
+                              data-flag-title="Mysql(InnoDB)索引的原理">
+                              <span class="post-meta-item-text">阅读 </span>
+                              <span class="leancloud-visitors-count"></span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="layout-post-navigation">
+                          <div class="navigation-list">
+                            
+                            <div class="post-card row">
+                              
+                              <div class="card-content col-8 col-md-9">
+                                <div class="card-body">
+                                  <div class="header">
+                                    <a href="https://esinew.github.io/post/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc/" class="title">
+                                      <h4>mysql事务隔离级别及MVCC</h4>
+                                    </a>
+                                  </div>
+                                  <div class="inner d-none d-sm-block">
+                                    <div class="abstract">
+                                      <p>MySQL定义了4类隔离级别，包括一些具体规则，用来限定事物内外的哪些改变时可见的，哪些改变时不可见的，低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
 <p><strong>第一类：</strong> Read Uncommitted(读取未提交的内容)事务A/事务B    在该隔离级别，所有事物都可以看到其他未提交事务的执行结果，本隔离级别很少用于实际应用，因为他的性能页不比其他级别好多少，读取未提交的数据，也被称之为脏读（Dirty Read）。</p>
 <p><strong>第二类：</strong> Read Committed(读取提交内容)    这是大多数数据库系统的默认隔离级别（但不是mysql默认的），他满足了隔离的简单定义：一个事物在提交之前对其他事物是不可见的，这种隔离级别也支持所谓的不可重复读取（Nonerepeatable Read）,因为同一事务的其他实例在该实例处理其他期间可能会有新的commit，所以同一select可能返回不同结果。</p>
 <p><strong>第三类：</strong> Repeatable Read(可复读)    这是mysql默认的隔离级别，他确保同一事务的多个实例在并发读取数据时，会看到同样的数据行，不过理论上，这会导致另一个棘手的问题，幻读（Phantom Read），简单的说，幻读指当用户读取某一范围的数据行时，另一个事物又在该范围内插入了新行，当用户再读取该范围内的数据时，会发现有新的&quot;幻影&quot;行，Innodb和Falcon存储引擎通过多版本并发控制（MVCC）机制解决了该问题。</p>
@@ -239,64 +372,7 @@
 <p>正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同。在RR级别下的某个事务的对某条记录的第一次快照读会创建一个快照及Read View, 将当前系统活跃的其他事务记录起来，此后在调用快照读的时候，还是使用的是同一个Read View，所以只要当前事务在其他事务提交更新之前使用过快照读，那么之后的快照读使用的都是同一个Read View，所以对之后的修改不可见；即RR级别下，快照读生成Read View时，Read View会记录此时所有其他活动事务的快照，这些事务的修改对于当前事务都是不可见的。而早于Read View创建的事务所做的修改均是可见。而在RC级别下的，事务中，每次快照读都会新生成一个快照和Read View, 这就是我们在RC级别下的事务中可以看到别的事务提交的更新的原因。</p>
 <p><strong><u>MVCC原理：</u></strong></p>
 <p>MVCC（ Multi-Version Concurrency Control ，多版本并发控制）指的就是在使用READ COMMITTD、REPEATABLE READ这两种隔离级别的事务在执行普通的SEELCT操作时访问记录的版本链的过程。可以使不同事务的读-写、写-读操作并发执行，从而提升系统性能。 READ COMMITTD、 REPEATABLE READ这两个隔离级别的一个很大不同就是：生成ReadView的时机不同， READ COMMITTD在每一次进行普通SELECT操作前都会生成一个ReadView，而REPEATABLE READ只在第一次进行普通SELECT操作前生成一个ReadView，之后的查询操作都重复使用这个ReadView就好了。</p>
-<!-- more -->
 
-                          </div>
-                        </div>
-                        <div class="layout-post-social">
-                          <div class="item reader">
-                            <div id="/post/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc/" class="leancloud-visitors view"
-                              data-flag-title="mysql事务隔离级别及MVCC">
-                              <span class="post-meta-item-text">阅读 </span>
-                              <span class="leancloud-visitors-count"></span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="layout-post-navigation">
-                          <div class="navigation-list">
-                            
-                            <div class="post-card row">
-                              
-                              <div class="card-content col-8 col-md-9">
-                                <div class="card-body">
-                                  <div class="header">
-                                    <a href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/" class="title">
-                                      <h4>Mysql(InnoDB)索引的原理</h4>
-                                    </a>
-                                  </div>
-                                  <div class="inner d-none d-sm-block">
-                                    <div class="abstract">
-                                      
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="card-footer">
-                                  <div class="item"><span>上一篇</span></div>
-                                  <div class="item">2020-06-24</div>
-                                </div>
-                              </div>
-                              <div class="card-thumb col-4 col-md-3">
-                                <div class="thumb">
-                                  <a href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/"
-                                    style="background-image: url('https://esinew.github.io//post-images/mysqlinnodbsuo-yin-de-yuan-li.jpg');"></a>
-                                </div>
-                              </div>
-                              
-                            </div>
-
-                            <div class="post-card row">
-                              
-                              <div class="card-content col-8 col-md-9">
-                                <div class="card-body">
-                                  <div class="header">
-                                    <a href="https://esinew.github.io/post/mysql-shu-ju-ku-yi/" class="title">
-                                      <h4>MySQL数据库（一）</h4>
-                                    </a>
-                                  </div>
-                                  <div class="inner d-none d-sm-block">
-                                    <div class="abstract">
-                                      
                                     </div>
                                   </div>
                                 </div>
@@ -307,13 +383,12 @@
                               </div>
                               <div class="card-thumb col-4 col-md-3">
                                 <div class="thumb">
-                                  <a href="https://esinew.github.io/post/mysql-shu-ju-ku-yi/"
-                                    style="background-image: url('https://esinew.github.io//post-images/mysql-shu-ju-ku-yi.jpg');"></a>
+                                  <a href="https://esinew.github.io/post/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc/"
+                                    style="background-image: url('https://esinew.github.io//post-images/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc.png');"></a>
                                 </div>
                               </div>
                               
                             </div>
-
                             
                           </div>
                         </div>
@@ -326,7 +401,20 @@
                     <div class="col-12 col-lg-2 d-none d-lg-block">
                       <div class="layout-post-sidebar">
                         <div class="layout-sidebar-item">
-                          
+                          <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%BC%95%E8%A8%80">引言</a></li>
+<li><a href="#%E6%AD%A3%E6%96%87">正文</a>
+<ul>
+<li><a href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E7%A7%91%E6%99%AE">索引的科普</a></li>
+<li><a href="#%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E4%BB%8B%E7%BB%8D">索引原理介绍</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
                         </div>
                       </div>
                     </div>
