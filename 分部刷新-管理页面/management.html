@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style>
+			.userMenu{
+				float: left;
+				width: 200px;
+				height: 90%;
+				margin-top: 20px;
+			}
+			.userMenu li{
+				height: 20px;
+				width: 120px;
+				padding-top:5px;
+				background: rgba(59,149,149,0.5);
+				border:  solid silver 2px;
+			}
+			#content{
+				float: left;
+				margin-top:18px ;
+				margin-left: -50px;
+				background: rgba(59,149,149,0.5);
+				border: solid silver 2px;
+				height: 700px;
+				width: 600px;
+			}
+		</style>
+		<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+	</head>
+	<body>
+		<div class="userWrap">
+			<ul class="userMenu">
+				<li class="current" data-id="center">管理员用户中心</li>
+				<li data-id = "account">普通用户</li>
+				<li data-id = "info">消息中心</li>
+			</ul>
+			<div id="content"></div>
+		</div>
+	</body>
+	<script>
+		$(function(){
+			$(".userMenu").on("click","li",function(){
+				var sId=$(this).data("id");
+				window.location.hash=sId;
+				loadInner(sId);
+			});
+			function loadInner(sId){
+				var sId =window.location.hash;
+				var pathn,i;
+				switch(sId){
+					case "#center":
+					pathn="user_center.html";
+					i=0;
+					break;
+					case "#account":
+					pathn="user_account.html"
+					i=1;
+					break;
+					
+					case "#info":
+					pathn="user_info.html";
+					i=3;
+					break;
+					default:
+					pathn="user_center.html";
+					i=0;
+					break;
+				}
+				$("#content").load(pathn);
+				$(".userMenu li").eq(i).addClass("current").removeClass("current");
+			}
+			var sId=window.location.hash;
+				loadInner(sId);
+		});
+	</script>
+</html>

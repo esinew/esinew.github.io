@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<div><h2>普通用户管理</h2></div>
+			<div>
+			    <div class="widget-forms clearfix">
+              
+                <form action="employee/add" method="post" enctype="multipart/form-data" id="myform" class="form-horizontal" onsubmit="return isfull()&&validate();">
+                  <div class="control-group">
+                    <label class="control-label">账号</label>
+                    <div class="controls">
+                      <input class="span7" type="text" placeholder="根据学号自动生成" name="account" id="account" readonly="readonly">
+                      <span class="help-inline"><img id="loading"><font id="show"></font></span>
+                    </div>
+                  </div>
+                  
+                  <div class="control-group">
+                    <label class="control-label">姓名</label>
+                    <div class="controls">
+                      <input class="span7" type="text" placeholder="请填写真实姓名" name="name" id="name"  maxlength="4" onchange="getaccount();" onkeyup="value=value.replace(/[^\u4E00-\u9FA5]/g,'')">
+                    </div>
+                  </div>
+            
+                   <div class="control-group">
+                   <label class="control-label">证件</label>
+                    <div class="controls">
+                     <select class="span2">
+                      <option selected="selected">学生证</option>
+                      <option selected="selected">身份证</option>
+                     </select>
+                    &nbsp;&nbsp;&nbsp;
+                    <input type="text" class="span5" placeholder="证件号码" name='idcard' id="idcard">
+                    </div>
+                  </div>
+               
+            <div class="widget-footer">
+               <button class="btn btn-primary" type="submit">保存</button>
+               <button class="btn" id="reset" onclick="clren();" type="button">重置</button>
+              </div>
+         	 </form>
+              </div>
+		</div>
+	</body>
+</html>
