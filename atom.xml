@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://esinew.github.io/</id>
     <title>每一步都是新生</title>
-    <updated>2020-06-24T02:07:53.639Z</updated>
+    <updated>2020-06-28T18:24:34.754Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://esinew.github.io/"/>
     <link rel="self" href="https://esinew.github.io/atom.xml"/>
@@ -10,6 +10,37 @@
     <logo>https://esinew.github.io/images/avatar.png</logo>
     <icon>https://esinew.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 每一步都是新生</rights>
+    <entry>
+        <title type="html"><![CDATA[Mybiatis使用MybatisCodeHelperPro插件快速开发]]></title>
+        <id>https://esinew.github.io/post/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa/</id>
+        <link href="https://esinew.github.io/post/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa/">
+        </link>
+        <updated>2020-06-28T18:14:31.000Z</updated>
+        <content type="html"><![CDATA[<p>（转载自 简书  葛俊_0f97）<br>
+如何达到最快的效率 下面是我的开发流程</p>
+<p>java类生成crud 不再推荐使用 各种功能没有数据库生成crud 方便 数据库生成crud 在表字段 添加减少字段 合并代码也做得更好</p>
+<p>数据库的话 首先要建表 直接写建表语句比较麻烦 我们可以通过java类生成建表语句来生成好</p>
+<p>我们先写一个超级简单的java类 啥也不需要加 private也不需要 这个类只是用来生成建表语句</p>
+<figure data-type="image" tabindex="1"><img src="https://esinew.github.io//post-images/1593368287814.gif" alt="" loading="lazy"></figure>
+<p>mybatis快速开发.gif</p>
+<p>生成好了建表语句后 到数据库执行下 然后从数据库来生成crud代码</p>
+<p>(使用IDEA高级版的用户直接到IDEA高级版的数据库执行就行)</p>
+<p>这时就可以选择各种配置了</p>
+<p>在数据库添加 减少字段后 到数据库 重新生成下就好了</p>
+<p>当我们数据库用的tinyInt 或者 smallInt这种 生成java类型 是 byte 和 short 两种类型</p>
+<p>在java代码里面操作 byte 和 short 类型 比较麻烦 经常需要 强制转换 这是可以配置下 设置 使用Integer 来替代byte和short</p>
+<p><img src="https://esinew.github.io//post-images/1593368312200.png" alt="" loading="lazy"><br>
+useIntegerInsteadOfByteAndShort.png</p>
+<p>在数据库生成crud时 部分用户可能会勾选 生成example 这个选项</p>
+<p>我建议使用 方法名生成sql 来替代生成example这个</p>
+<p>首先可以避免生成一大堆的example文件 xml中的example代码看起来也很恶心</p>
+<p>写方法名生成sql 的效率也比写example来得快</p>
+<p>看xml也很清楚 到底进行了啥操作</p>
+<p>另外2.5版本 将支持 定制sql 数据库生成crud中 默认生成的那些语句 比如deleteByPrimaryKey 有不需要的可以一开始就给干掉</p>
+<p>如果之后要的话 可以从数据库重新来生成 比如batchInsert 这种 只有当前表需要的时候才来生成</p>
+<p>另外我也不推荐 mapper接口做继承 现在代码都是自动生成的，mapper做继承仅能减少一些代码量，没有看到什么其他的效率提升。搞了继承后 看mapper接口 对应的xml 也变得比较麻烦 哪些方法要放到继承里面也比较难定义，有可能某些接口继承的方法根本用不到, 我的建议是每个接口 只生成自己需要的xml方法， 比如batchInsert这个，有个表需要 有的表并不需要。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Mysql(InnoDB)索引的原理]]></title>
         <id>https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/</id>
