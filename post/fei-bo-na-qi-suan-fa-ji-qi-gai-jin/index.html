@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-<title>Mybiatis使用MybatisCodeHelperPro插件快速开发 - 每一步都是新生</title>
+<title>斐波那契算法及其改进 - 每一步都是新生</title>
 <meta name="description" content="温故而知新">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -130,52 +130,148 @@
                     <div class="col-12 col-lg-10">
                       <div class="layout-post-main m-right m-md-right">
                         <div class="layout-post-header">
-                          <h1 class="layout-post-title">Mybiatis使用MybatisCodeHelperPro插件快速开发</h1>
+                          <h1 class="layout-post-title">斐波那契算法及其改进</h1>
                           <div class="layout-post-meta">
                             <div class="item">
                               
                             </div>
                             <div class="item">
-                              <span>2020-06-29</span>
+                              <span>2020-06-30</span>
                             </div>
                           </div>
                         </div>
                         <div class="layout-post-content">
                           <div class="layout-post-item">
                             
-                            <p class="with-img"><img src="https://esinew.github.io//post-images/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa.png"
-                                class="attachment-full size-full wp-post-image" alt="Mybiatis使用MybatisCodeHelperPro插件快速开发" /></p>
+                            <p class="with-img"><img src="https://esinew.github.io//post-images/fei-bo-na-qi-suan-fa-ji-qi-gai-jin.jpg"
+                                class="attachment-full size-full wp-post-image" alt="斐波那契算法及其改进" /></p>
                             
-                            <p>（转载自 简书  葛俊_0f97）<br>
-如何达到最快的效率 下面是我的开发流程</p>
-<p>java类生成crud 不再推荐使用 各种功能没有数据库生成crud 方便 数据库生成crud 在表字段 添加减少字段 合并代码也做得更好</p>
-<p>数据库的话 首先要建表 直接写建表语句比较麻烦 我们可以通过java类生成建表语句来生成好</p>
-<p>我们先写一个超级简单的java类 啥也不需要加 private也不需要 这个类只是用来生成建表语句</p>
-<figure data-type="image" tabindex="1"><img src="https://esinew.github.io//post-images/1593368287814.gif" alt="" loading="lazy"></figure>
-<p>mybatis快速开发.gif</p>
-<p>生成好了建表语句后 到数据库执行下 然后从数据库来生成crud代码</p>
-<p>(使用IDEA高级版的用户直接到IDEA高级版的数据库执行就行)</p>
-<p>这时就可以选择各种配置了</p>
-<p>在数据库添加 减少字段后 到数据库 重新生成下就好了</p>
-<p>当我们数据库用的tinyInt 或者 smallInt这种 生成java类型 是 byte 和 short 两种类型</p>
-<p>在java代码里面操作 byte 和 short 类型 比较麻烦 经常需要 强制转换 这是可以配置下 设置 使用Integer 来替代byte和short</p>
-<p><img src="https://esinew.github.io//post-images/1593368312200.png" alt="" loading="lazy"><br>
-useIntegerInsteadOfByteAndShort.png</p>
-<p>在数据库生成crud时 部分用户可能会勾选 生成example 这个选项</p>
-<p>我建议使用 方法名生成sql 来替代生成example这个</p>
-<p>首先可以避免生成一大堆的example文件 xml中的example代码看起来也很恶心</p>
-<p>写方法名生成sql 的效率也比写example来得快</p>
-<p>看xml也很清楚 到底进行了啥操作</p>
-<p>另外2.5版本 将支持 定制sql 数据库生成crud中 默认生成的那些语句 比如deleteByPrimaryKey 有不需要的可以一开始就给干掉</p>
-<p>如果之后要的话 可以从数据库重新来生成 比如batchInsert 这种 只有当前表需要的时候才来生成</p>
-<p>另外我也不推荐 mapper接口做继承 现在代码都是自动生成的，mapper做继承仅能减少一些代码量，没有看到什么其他的效率提升。搞了继承后 看mapper接口 对应的xml 也变得比较麻烦 哪些方法要放到继承里面也比较难定义，有可能某些接口继承的方法根本用不到, 我的建议是每个接口 只生成自己需要的xml方法， 比如batchInsert这个，有个表需要 有的表并不需要。</p>
+                            <p>斐波那契算法</p>
+<pre><code>Fibonacci(int n){
+
+if(n==1||n==2){
+
+return 1;
+
+}
+
+return Fibonacci(n-1)+Fibonacci(n-2)；
+
+}
+</code></pre>
+<p>改进（解决溢出问题、性能问题）</p>
+<pre><code>private static readonly Dictionary&lt;int,BigInteger&gt; _cach = new Dictionary&lt;int,BigInteger&gt;();
+public static BigIneger Fibonacci(int n){
+	if(n &lt; = 2){
+	return 1;
+	}
+	if(_cach.TryGetValue(n,out BigInteger result)){
+	return result;
+	}
+	result = Fibonacci(n-1)+Fibonacci(n-2);
+	_cach.Add(n,result);
+	return result;
+	
+}
+</code></pre>
+<p>{f(n), f(n-1), f(n-1), f(n-2)} ={1, 1, 1,0}n-1</p>
+<p>(注：{f(n+1), f(n), f(n), f(n-1)}表示一个矩阵。在矩阵中第一行第一列是f(n+1)，第一行第二列是f(n)，第二行第一列是f(n)，第二行第二列是f(n-1)。，如果还不懂的话，再去看一下线性代数)</p>
+<p>有了这个公式，要求得f(n)，我们只需要求得矩阵{1, 1, 1,0}的n-1次方，因为矩阵{1, 1, 1,0}的n-1次方的结果的第一行第一列就是f(n)。这个数学公式用数学归纳法不难证明。感兴趣的朋友不妨自己证明一下。<br>
+现在的问题转换为求矩阵{1, 1, 1, 0}的乘方。如果简单第从0开始循环，n次方将需要n次运算，并不比前面的方法要快。但我们可以考虑乘方的如下性质：</p>
+<p>​    / an/2<em>an/2           n为偶数时<br>
+an=<br>
+​    \ a(n-1)/2</em>a(n-1)/2      n为奇数时</p>
+<p>要求得n次方，我们先求得n/2次方，再把n/2的结果平方一下。如果把求n次方的问题看成一个大问题，把求n/2看成一个较小的问题。这种把大问题分解成一个或多个小问题的思路我们称之为分治法。这样求n次方就只需要logn次运算了。</p>
+<p>实现这种方式时，首先需要定义一个2×2的矩阵，并且定义好矩阵的乘法以及乘方运算。当这些运算定义好了之后，剩下的事情就变得非常简单。完整的实现代码如下所示。</p>
+<pre><code>struct Matrix2By2
+{
+      Matrix2By2
+      (
+            long long m00 = 0, 
+            long long m01 = 0, 
+            long long m10 = 0, 
+            long long m11 = 0
+      )
+      :m_00(m00), m_01(m01), m_10(m10), m_11(m11) 
+      {
+      }
+
+      long long m_00;
+      long long m_01;
+      long long m_10;
+      long long m_11;
+};
+
+</code></pre>
+<pre><code>///////////////////////////////////////////////////////////////////////
+// Multiply two matrices
+// Input: matrix1 - the first matrix
+//        matrix2 - the second matrix
+//Output: the production of two matrices
+///////////////////////////////////////////////////////////////////////
+Matrix2By2 MatrixMultiply
+(
+      const Matrix2By2&amp; matrix1, 
+      const Matrix2By2&amp; matrix2
+)
+{
+      return Matrix2By2(
+            matrix1.m_00 * matrix2.m_00 + matrix1.m_01 * matrix2.m_10,
+            matrix1.m_00 * matrix2.m_01 + matrix1.m_01 * matrix2.m_11,
+            matrix1.m_10 * matrix2.m_00 + matrix1.m_11 * matrix2.m_10,
+            matrix1.m_10 * matrix2.m_01 + matrix1.m_11 * matrix2.m_11);
+}
+
+///////////////////////////////////////////////////////////////////////
+// The nth power of matrix 
+// 1  1
+// 1  0
+///////////////////////////////////////////////////////////////////////
+Matrix2By2 MatrixPower(unsigned int n)
+{
+      assert(n &gt; 0);
+
+      Matrix2By2 matrix;
+      if(n == 1)
+      {
+            matrix = Matrix2By2(1, 1, 1, 0);
+      }
+      else if(n % 2 == 0)
+      {
+            matrix = MatrixPower(n / 2);
+            matrix = MatrixMultiply(matrix, matrix);
+      }
+      else if(n % 2 == 1)
+      {
+            matrix = MatrixPower((n - 1) / 2);
+            matrix = MatrixMultiply(matrix, matrix);
+            matrix = MatrixMultiply(matrix, Matrix2By2(1, 1, 1, 0));
+      }
+
+      return matrix;
+}
+
+///////////////////////////////////////////////////////////////////////
+// Calculate the nth item of Fibonacci Series using devide and conquer
+///////////////////////////////////////////////////////////////////////
+long long Fibonacci_Solution3(unsigned int n)
+{
+      int result[2] = {0, 1};
+      if(n &lt; 2)
+            return result[n];
+
+      Matrix2By2 PowerNMinus2 = MatrixPower(n - 1);
+      return PowerNMinus2.m_00;
+}
+
+</code></pre>
 
                           </div>
                         </div>
                         <div class="layout-post-social">
                           <div class="item reader">
-                            <div id="/post/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa/" class="leancloud-visitors view"
-                              data-flag-title="Mybiatis使用MybatisCodeHelperPro插件快速开发">
+                            <div id="/post/fei-bo-na-qi-suan-fa-ji-qi-gai-jin/" class="leancloud-visitors view"
+                              data-flag-title="斐波那契算法及其改进">
                               <span class="post-meta-item-text">阅读 </span>
                               <span class="leancloud-visitors-count"></span>
                             </div>
@@ -190,37 +286,8 @@ useIntegerInsteadOfByteAndShort.png</p>
                               <div class="card-content col-8 col-md-9">
                                 <div class="card-body">
                                   <div class="header">
-                                    <a href="https://esinew.github.io/post/fei-bo-na-qi-suan-fa-ji-qi-gai-jin/" class="title">
-                                      <h4>斐波那契算法及其改进</h4>
-                                    </a>
-                                  </div>
-                                  <div class="inner d-none d-sm-block">
-                                    <div class="abstract">
-                                      
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="card-footer">
-                                  <div class="item"><span>上一篇</span></div>
-                                  <div class="item">2020-06-30</div>
-                                </div>
-                              </div>
-                              <div class="card-thumb col-4 col-md-3">
-                                <div class="thumb">
-                                  <a href="https://esinew.github.io/post/fei-bo-na-qi-suan-fa-ji-qi-gai-jin/"
-                                    style="background-image: url('https://esinew.github.io//post-images/fei-bo-na-qi-suan-fa-ji-qi-gai-jin.jpg');"></a>
-                                </div>
-                              </div>
-                              
-                            </div>
-
-                            <div class="post-card row">
-                              
-                              <div class="card-content col-8 col-md-9">
-                                <div class="card-body">
-                                  <div class="header">
-                                    <a href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/" class="title">
-                                      <h4>Mysql(InnoDB)索引的原理</h4>
+                                    <a href="https://esinew.github.io/post/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa/" class="title">
+                                      <h4>Mybiatis使用MybatisCodeHelperPro插件快速开发</h4>
                                     </a>
                                   </div>
                                   <div class="inner d-none d-sm-block">
@@ -231,18 +298,17 @@ useIntegerInsteadOfByteAndShort.png</p>
                                 </div>
                                 <div class="card-footer">
                                   <div class="item"><span>下一篇</span></div>
-                                  <div class="item">2020-06-24</div>
+                                  <div class="item">2020-06-29</div>
                                 </div>
                               </div>
                               <div class="card-thumb col-4 col-md-3">
                                 <div class="thumb">
-                                  <a href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/"
-                                    style="background-image: url('https://esinew.github.io//post-images/mysqlinnodbsuo-yin-de-yuan-li.jpg');"></a>
+                                  <a href="https://esinew.github.io/post/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa/"
+                                    style="background-image: url('https://esinew.github.io//post-images/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa.png');"></a>
                                 </div>
                               </div>
                               
                             </div>
-
                             
                           </div>
                         </div>
