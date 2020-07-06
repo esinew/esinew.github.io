@@ -33,7 +33,7 @@
 						<div class="logo">
 							<a href="https://esinew.github.io/">
 								<img class="logo"
-									src="https://esinew.github.io//media/images/site_avatar.png?v=1593849132616"
+									src="https://esinew.github.io//media/images/site_avatar.png?v=1594054367360"
 									alt="">
 							</a>
 						</div>
@@ -72,7 +72,7 @@
 							<div class="search-lightbox">
 								<div class="search-body">
 
-									<form id="gridea-search-form" data-update="1593849132616" action="/search/" class="search-form">
+									<form id="gridea-search-form" data-update="1594054367360" action="/search/" class="search-form">
 										<input type="text" name="q" id="s" value="" class="search-field" placeholder="请输入搜索关键词" aria-label="请输入搜索关键词" required="">
 										<button type="submit" class="submit" aria-label="Submit">
 											<i class="fa fa-search" aria-hidden="true"></i>
@@ -146,7 +146,13 @@
                             <p class="with-img"><img src="https://esinew.github.io//post-images/mysql-shu-ju-ku-yi.jpg"
                                 class="attachment-full size-full wp-post-image" alt="MySQL数据库（一）" /></p>
                             
-                            <p><strong>mysql默认的存储引擎</strong>：InnoDB</p>
+                            <p><strong>mysql默认的存储引擎</strong>：InnoDB<br>
+1、InnoDB支持主外键、事务；<br>
+2、InnoDB是行锁，操作时候只锁一行数据，适合高并发；MyISAM是表索；<br>
+3、InnoDB不仅缓存索引，还缓存真实数据；MyISAM只缓存索引；<br>
+4、InnoDB需要表空间大；<br>
+5、InnoDB关注事务，MyISAM关注性能（查）；<br>
+————————————————</p>
 <p><strong>InnoDB</strong>(其行锁机制和多版本的支持为数据读取和更新的混合操作提供了良好的并发机制)</p>
 <p><strong>MyISAM</strong>表最适合大量的数据读而少量数据更新的混合操作，或者使用压缩的只读表。</p>
 <p><strong>MEMORY</strong>存储引擎适合存储非永久需要的数据，或者能够从基于磁盘的表中重新生成的数据。</p>

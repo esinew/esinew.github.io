@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-<title>Mybiatis使用MybatisCodeHelperPro插件快速开发 - 每一步都是新生</title>
+<title>索引 - 每一步都是新生</title>
 <meta name="description" content="温故而知新">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -130,52 +130,35 @@
                     <div class="col-12 col-lg-10">
                       <div class="layout-post-main m-right m-md-right">
                         <div class="layout-post-header">
-                          <h1 class="layout-post-title">Mybiatis使用MybatisCodeHelperPro插件快速开发</h1>
+                          <h1 class="layout-post-title">索引</h1>
                           <div class="layout-post-meta">
                             <div class="item">
                               
                             </div>
                             <div class="item">
-                              <span>2020-06-29</span>
+                              <span>2020-07-06</span>
                             </div>
                           </div>
                         </div>
                         <div class="layout-post-content">
                           <div class="layout-post-item">
                             
-                            <p class="with-img"><img src="https://esinew.github.io//post-images/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa.png"
-                                class="attachment-full size-full wp-post-image" alt="Mybiatis使用MybatisCodeHelperPro插件快速开发" /></p>
-                            
-                            <p>（转载自 简书  葛俊_0f97）<br>
-如何达到最快的效率 下面是我的开发流程</p>
-<p>java类生成crud 不再推荐使用 各种功能没有数据库生成crud 方便 数据库生成crud 在表字段 添加减少字段 合并代码也做得更好</p>
-<p>数据库的话 首先要建表 直接写建表语句比较麻烦 我们可以通过java类生成建表语句来生成好</p>
-<p>我们先写一个超级简单的java类 啥也不需要加 private也不需要 这个类只是用来生成建表语句</p>
-<figure data-type="image" tabindex="1"><img src="https://esinew.github.io//post-images/1593368287814.gif" alt="" loading="lazy"></figure>
-<p>mybatis快速开发.gif</p>
-<p>生成好了建表语句后 到数据库执行下 然后从数据库来生成crud代码</p>
-<p>(使用IDEA高级版的用户直接到IDEA高级版的数据库执行就行)</p>
-<p>这时就可以选择各种配置了</p>
-<p>在数据库添加 减少字段后 到数据库 重新生成下就好了</p>
-<p>当我们数据库用的tinyInt 或者 smallInt这种 生成java类型 是 byte 和 short 两种类型</p>
-<p>在java代码里面操作 byte 和 short 类型 比较麻烦 经常需要 强制转换 这是可以配置下 设置 使用Integer 来替代byte和short</p>
-<p><img src="https://esinew.github.io//post-images/1593368312200.png" alt="" loading="lazy"><br>
-useIntegerInsteadOfByteAndShort.png</p>
-<p>在数据库生成crud时 部分用户可能会勾选 生成example 这个选项</p>
-<p>我建议使用 方法名生成sql 来替代生成example这个</p>
-<p>首先可以避免生成一大堆的example文件 xml中的example代码看起来也很恶心</p>
-<p>写方法名生成sql 的效率也比写example来得快</p>
-<p>看xml也很清楚 到底进行了啥操作</p>
-<p>另外2.5版本 将支持 定制sql 数据库生成crud中 默认生成的那些语句 比如deleteByPrimaryKey 有不需要的可以一开始就给干掉</p>
-<p>如果之后要的话 可以从数据库重新来生成 比如batchInsert 这种 只有当前表需要的时候才来生成</p>
-<p>另外我也不推荐 mapper接口做继承 现在代码都是自动生成的，mapper做继承仅能减少一些代码量，没有看到什么其他的效率提升。搞了继承后 看mapper接口 对应的xml 也变得比较麻烦 哪些方法要放到继承里面也比较难定义，有可能某些接口继承的方法根本用不到, 我的建议是每个接口 只生成自己需要的xml方法， 比如batchInsert这个，有个表需要 有的表并不需要。</p>
+                            <p><strong>索引基础</strong></p>
+<p>索引：排好序的快速查找数据结构；<br>
+优点：提高数据检索的效率，降低数据排序的成本；<br>
+缺点：会降低更新表的速度；</p>
+<p>单值索引：一个索引只包含单个列，一个表可以由多个单值索引；<br>
+唯一索引：索引列的值必须唯一，允许有空值；<br>
+复合索引：即一个索引包含多个列；</p>
+<p>索引结构：<br>
+BTree索引，Hash索引，full-text全文索引，R-Tree索引；</p>
 
                           </div>
                         </div>
                         <div class="layout-post-social">
                           <div class="item reader">
-                            <div id="/post/mybiatis-shi-yong-mybatiscodehelperpro-cha-jian-kuai-su-kai-fa/" class="leancloud-visitors view"
-                              data-flag-title="Mybiatis使用MybatisCodeHelperPro插件快速开发">
+                            <div id="/post/suo-yin/" class="leancloud-visitors view"
+                              data-flag-title="索引">
                               <span class="post-meta-item-text">阅读 </span>
                               <span class="leancloud-visitors-count"></span>
                             </div>
@@ -187,14 +170,14 @@ useIntegerInsteadOfByteAndShort.png</p>
                             
                             <div class="post-card row">
                               
-                              <div class="card-content col-8 col-md-9">
+                              <div class="card-content col-12">
                                 <div class="card-body">
                                   <div class="header">
-                                    <a href="https://esinew.github.io/post/fei-bo-na-qi-suan-fa-ji-qi-gai-jin/" class="title">
-                                      <h4>斐波那契算法及其改进</h4>
+                                    <a href="https://esinew.github.io/post/ji-he-xian-cheng-an-quan-wen-ti/" class="title">
+                                      <h4>集合线程安全问题</h4>
                                     </a>
                                   </div>
-                                  <div class="inner d-none d-sm-block">
+                                  <div class="inner">
                                     <div class="abstract">
                                       
                                     </div>
@@ -202,13 +185,7 @@ useIntegerInsteadOfByteAndShort.png</p>
                                 </div>
                                 <div class="card-footer">
                                   <div class="item"><span>上一篇</span></div>
-                                  <div class="item">2020-06-30</div>
-                                </div>
-                              </div>
-                              <div class="card-thumb col-4 col-md-3">
-                                <div class="thumb">
-                                  <a href="https://esinew.github.io/post/fei-bo-na-qi-suan-fa-ji-qi-gai-jin/"
-                                    style="background-image: url('https://esinew.github.io//post-images/fei-bo-na-qi-suan-fa-ji-qi-gai-jin.jpg');"></a>
+                                  <div class="item">2020-07-07</div>
                                 </div>
                               </div>
                               
@@ -216,14 +193,14 @@ useIntegerInsteadOfByteAndShort.png</p>
 
                             <div class="post-card row">
                               
-                              <div class="card-content col-8 col-md-9">
+                              <div class="card-content col-12">
                                 <div class="card-body">
                                   <div class="header">
-                                    <a href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/" class="title">
-                                      <h4>Mysql(InnoDB)索引的原理</h4>
+                                    <a href="https://esinew.github.io/post/bionioaio-zheng-li/" class="title">
+                                      <h4>BIO,NIO,AIO整理</h4>
                                     </a>
                                   </div>
-                                  <div class="inner d-none d-sm-block">
+                                  <div class="inner">
                                     <div class="abstract">
                                       
                                     </div>
@@ -231,13 +208,7 @@ useIntegerInsteadOfByteAndShort.png</p>
                                 </div>
                                 <div class="card-footer">
                                   <div class="item"><span>下一篇</span></div>
-                                  <div class="item">2020-06-24</div>
-                                </div>
-                              </div>
-                              <div class="card-thumb col-4 col-md-3">
-                                <div class="thumb">
-                                  <a href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/"
-                                    style="background-image: url('https://esinew.github.io//post-images/mysqlinnodbsuo-yin-de-yuan-li.jpg');"></a>
+                                  <div class="item">2020-07-03</div>
                                 </div>
                               </div>
                               
