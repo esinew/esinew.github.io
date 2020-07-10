@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://esinew.github.io/</id>
     <title>每一步都是新生</title>
-    <updated>2020-07-09T12:21:50.205Z</updated>
+    <updated>2020-07-10T08:42:37.007Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://esinew.github.io/"/>
     <link rel="self" href="https://esinew.github.io/atom.xml"/>
@@ -11,12 +11,52 @@
     <icon>https://esinew.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 每一步都是新生</rights>
     <entry>
+        <title type="html"><![CDATA[AnnotationConfigApplicationContext和实例化对象的调用方式的区别]]></title>
+        <id>https://esinew.github.io/post/annotationconfigapplicationcontext-he-shi-li-hua-dui-xiang-de-diao-yong-fang-shi-de-qu-bie/</id>
+        <link href="https://esinew.github.io/post/annotationconfigapplicationcontext-he-shi-li-hua-dui-xiang-de-diao-yong-fang-shi-de-qu-bie/">
+        </link>
+        <updated>2020-07-10T08:41:25.000Z</updated>
+        <content type="html"><![CDATA[<p>AnnotationConfigApplicationContext使用的是声明式引用，声明一个变量，并不会分配一个完整的对象所需要的内存空间，只是将对象名所代表的变量看成是一个引用变量，并为它分配所需内存空间，它所占用的空间远远小于一个类的对象所需要的空间。</p>
+<p>而实例化的过程就是为对象分配内存空间的过程，此时，对象才成为类的实例。new所执行的具体操作是调用相应类中的构造方法（包括祖先类的构造方法），来完成内存分配以及变量的初始化工作，然后将<strong>分配的内存地址</strong>返回给所定义的变量。</p>
+<p>缺点：AnnotationConfigApplicationContext的运行速度要比实例化慢。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[ jvm垃圾收集器]]></title>
+        <id>https://esinew.github.io/post/jvm-la-ji-shou-ji-qi/</id>
+        <link href="https://esinew.github.io/post/jvm-la-ji-shou-ji-qi/">
+        </link>
+        <updated>2020-07-09T13:41:48.000Z</updated>
+        <content type="html"><![CDATA[<p><img src="https://esinew.github.io//post-images/1594302276635.jpg" alt="" loading="lazy"><br>
+垃圾收集器在JDK1.8之前有七个，JDK11更新了<strong>ZGC</strong>收集器。</p>
+<p><strong>Serial</strong>（Client模式下）是最基本的垃圾收集器使用的是<strong>复制算法</strong>，且为单线程，用于新生代（新生代存活对象少，只需要复制少量对象即可），垃圾回收过程中需要暂停其他所有线程。</p>
+<p><strong>ParNew</strong>（Server模式下）是<strong>Serial</strong>的多线程版本，虽然是多线程，但是当有线程开始清除垃圾时仍需要暂停其他所有线程。</p>
+<p><strong>Parallel Scavenge</strong>（多线程）同样用于新生代，采用的也是复制算法。和上述不同的是<strong>Parallel Scavenge</strong>重点关注的是如何工作能使程序达到一个可控的高吞吐量。高吞吐量可以最高效率的利用CPU时间，尽快的完成程序的运算任务，适用于后台运算而不需要太多交互的任务。（自适应调节策略）。</p>
+<p><u><em>吞吐量=运行代码的时间/（运行代码的时间+垃圾收集时间）</em></u></p>
+<p><strong>Serial Old</strong>老年代、单线程、标记-整理算法。</p>
+<p><strong>Parallel Old</strong>老年代、多线程、标记-整理算法。为老年代提供高吞吐量（JDK1.6），通常<strong>Parallel Scavenge</strong>搭配<strong>Parallel Old</strong>。</p>
+<p><strong>CMS</strong>（多线程标记清除算法Concurrent mark sweep）老年代，主要目的是<em>获取最短垃圾回收停顿时间</em>。工作过程分为四个阶段：</p>
+<p>1.初始标记：标记GC Roots直接关联的对象，速度快，仍需暂停所用工作线程。</p>
+<p>2.并发标记：GC Roots 跟踪，不需要暂停工作线程。（并发）</p>
+<p>3.重新标记：修正在并发标记期间因为用户程序继续运行而导致标记产生的那一部分对象的标记记录（暂停所用工作线程）。</p>
+<p>4.并发清除：清除GC Roots不可达对象（并发）。</p>
+<p>其中2、4时间最长</p>
+<figure data-type="image" tabindex="1"><img src="https://esinew.github.io//post-images/1594302261968.jpg" alt="" loading="lazy"></figure>
+<p><strong>G1收集器</strong>（jDK1.8最好的收集器）</p>
+<p>有以下优点：</p>
+<p>1.标记-整理算法，不产生内存碎片。</p>
+<p>2.可以非常精确的控制停顿时间，在不牺牲吞吐量的前提下，实现低停顿垃圾的垃圾回收。</p>
+<p><em>实现原理</em>：将内存划分为大小固定的几个独立区域，并且跟踪这些区域的垃圾收集进度，同时在后台维护一个优先级列表，每次根据所允许的收集时间，优先回收垃圾最多的区域。</p>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[G1收集器与ZGC收集器]]></title>
         <id>https://esinew.github.io/post/g1-shou-ji-qi-yu-zgc-shou-ji-qi/</id>
         <link href="https://esinew.github.io/post/g1-shou-ji-qi-yu-zgc-shou-ji-qi/">
         </link>
         <updated>2020-07-09T12:15:11.000Z</updated>
-        <content type="html"><![CDATA[<p>转载：云大的博客https://www.wangxinshuo.cn/2018/09/09/g1%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8Ezgc%E6%94%B6%E9%9B%86%E5%99%A8/</p>
+        <content type="html"><![CDATA[<!-- more -->
+<p>转载：云大的博客https://www.wangxinshuo.cn/2018/09/09/g1%E6%94%B6%E9%9B%86%E5%99%A8%E4%B8%8Ezgc%E6%94%B6%E9%9B%86%E5%99%A8/</p>
 <p>G1收集器<br>
 前言</p>
 <p>具有的特性：</p>
@@ -751,316 +791,6 @@ useIntegerInsteadOfByteAndShort.png</p>
 <p>另外2.5版本 将支持 定制sql 数据库生成crud中 默认生成的那些语句 比如deleteByPrimaryKey 有不需要的可以一开始就给干掉</p>
 <p>如果之后要的话 可以从数据库重新来生成 比如batchInsert 这种 只有当前表需要的时候才来生成</p>
 <p>另外我也不推荐 mapper接口做继承 现在代码都是自动生成的，mapper做继承仅能减少一些代码量，没有看到什么其他的效率提升。搞了继承后 看mapper接口 对应的xml 也变得比较麻烦 哪些方法要放到继承里面也比较难定义，有可能某些接口继承的方法根本用不到, 我的建议是每个接口 只生成自己需要的xml方法， 比如batchInsert这个，有个表需要 有的表并不需要。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Mysql(InnoDB)索引的原理]]></title>
-        <id>https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/</id>
-        <link href="https://esinew.github.io/post/mysqlinnodbsuo-yin-de-yuan-li/">
-        </link>
-        <updated>2020-06-24T02:00:13.000Z</updated>
-        <content type="html"><![CDATA[<p>(转载作者：孤独烟 出处： http://rjzheng.cnblogs.com/)</p>
-<h2 id="引言">引言</h2>
-<p>回想四年前，我在学习mysql的索引这块的时候，老师在讲索引的时候，是像下面这么说的</p>
-<blockquote>
-<p><strong>索引就像一本书的目录。而当用户通过索引查找数据时，就好比用户通过目录查询某章节的某个知识点。这样就帮助用户有效地提高了查找速度。所以，使用索引可以有效地提高数据库系统的整体性能。</strong></p>
-</blockquote>
-<p>嗯，这么说其实也对。但是呢，大家看完这种说法，其实可能还是觉得太抽象了！因此呢，我还想再深入的细说一下，所以就有了此文！<br>
-需要说明的是，我说的内容只在Mysql的Innodb引擎中是成立的。在Sql Server、oracle、Mysql的Mysiam引擎中的正确性，不一定成立！<br>
-OK，废话不多说，开始啰嗦!</p>
-<h2 id="正文">正文</h2>
-<h3 id="索引的科普">索引的科普</h3>
-<p>先引进聚簇索引和非聚簇索引的概念！<br>
-我们平时在使用的Mysql中，使用下述语句</p>
-<pre><code>CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
-    [USING index_type]
-    ON tbl_name (index_col_name,...)
- 
-index_col_name:
-    col_name [(length)] [ASC | DESC]
-</code></pre>
-<p>创建的索引，如复合索引、前缀索引、唯一索引，都是属于非聚簇索引，在有的书籍中，又将其称为辅助索引(secondary index)。在后文中，我们称其为非聚簇索引，其数据结构为B+树。</p>
-<p>那么，这个聚簇索引，在Mysql中是没有语句来另外生成的。在Innodb中，Mysql中的数据是按照主键的顺序来存放的。那么聚簇索引就是按照每张表的主键来构造一颗B+树，叶子节点存放的就是整张表的行数据。由于表里的数据只能按照一颗B+树排序，因此一张表只能有一个聚簇索引。</p>
-<p>在Innodb中，聚簇索引默认就是主键索引。<br>
-这个时候，机智的读者，应该要问我</p>
-<blockquote>
-<p><strong>如果我的表没建主键呢？</strong></p>
-</blockquote>
-<p>回答是，如果没有主键，则按照下列规则来建聚簇索引</p>
-<ul>
-<li>没有主键时，会用一个唯一且不为空的索引列做为主键，成为此表的聚簇索引</li>
-<li>如果没有这样的索引，InnoDB会隐式定义一个主键来作为聚簇索引。</li>
-</ul>
-<p><code>ps</code>:大家还记得，自增主键和uuid作为主键的区别么？由于主键使用了聚簇索引，如果主键是自增id，，那么对应的数据一定也是相邻地存放在磁盘上的，写入性能比较高。如果是uuid的形式，频繁的插入会使innodb频繁地移动磁盘块，写入性能就比较低了。</p>
-<h3 id="索引原理介绍">索引原理介绍</h3>
-<p>先来一张带主键的表，如下所示，pId是主键</p>
-<table>
-<thead>
-<tr>
-<th>pId</th>
-<th>name</th>
-<th>birthday</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>5</td>
-<td>zhangsan</td>
-<td>2016-10-02</td>
-</tr>
-<tr>
-<td>8</td>
-<td>lisi</td>
-<td>2015-10-04</td>
-</tr>
-<tr>
-<td>11</td>
-<td>wangwu</td>
-<td>2016-09-02</td>
-</tr>
-<tr>
-<td>13</td>
-<td>zhaoliu</td>
-<td>2015-10-07</td>
-</tr>
-</tbody>
-</table>
-<p>画出该表的结构图如下<br>
-<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index01.png" alt="image" loading="lazy"></p>
-<p>如上图所示，分为上下两个部分，上半部分是由主键形成的B+树，下半部分就是磁盘上真实的数据！那么，当我们， 执行下面的语句</p>
-<pre><code>select * from table where pId='11'
-</code></pre>
-<p>那么，执行过程如下<br>
-<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index02.png" alt="image" loading="lazy"><br>
-如上图所示，从根开始，经过3次查找，就可以找到真实数据。如果不使用索引，那就要在磁盘上，进行逐行扫描，直到找到数据位置。显然，使用索引速度会快。但是在写入数据的时候，需要维护这颗B+树的结构，因此写入性能会下降！<br>
-OK，接下来引入非聚簇索引!我们执行下面的语句</p>
-<pre><code>create index index_name on table(name);
-</code></pre>
-<p>此时结构图如下所示<br>
-<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index04.png" alt="image" loading="lazy"><br>
-大家注意看，会根据你的索引字段生成一颗新的B+树。因此， 我们每加一个索引，就会增加表的体积， 占用磁盘存储空间。然而，<strong>注意看叶子节点</strong>，非聚簇索引的叶子节点并不是真实数据，它的叶子节点依然是索引节点，存放的是该索引字段的值以及对应的主键索引(聚簇索引)。<br>
-如果我们执行下列语句</p>
-<pre><code>select * from table where name='lisi'
-</code></pre>
-<p>此时结构图如下所示<br>
-<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index05.png" alt="image" loading="lazy"><br>
-通过上图红线可以看出，先从非聚簇索引树开始查找，然后找到聚簇索引后。根据聚簇索引，在聚簇索引的B+树上，找到完整的数据！<br>
-那</p>
-<blockquote>
-<p><strong>什么情况不去聚簇索引树上查询呢？</strong></p>
-</blockquote>
-<p>还记得我们的非聚簇索引树上存着该索引字段的值么。如果，此时我们执行下面的语句</p>
-<pre><code>select name from table where name='lisi'
-</code></pre>
-<p>此时结构图如下<br>
-<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index06.png" alt="image" loading="lazy"><br>
-如上图红线所示，如果在非聚簇索引树上找到了想要的值，就不会去聚簇索引树上查询。还记得，博主在<a href="https://www.cnblogs.com/rjzheng/p/9902911.html">《select的正确姿势》</a>提到的索引问题么：</p>
-<blockquote>
-<p><strong>当执行select col from table where col = ?，col上有索引的时候，效率比执行select * from table where col = ? 速度快好几倍！</strong></p>
-</blockquote>
-<p>看完上面的图，你应该对这句话有更深层的理解了。</p>
-<p>那么这个时候，我们执行了下述语句，又会发生什么呢？</p>
-<pre><code>create index index_birthday on table(birthday);
-</code></pre>
-<p>此时结构图如下<br>
-<img src="https://www.cnblogs.com/images/cnblogs_com/rjzheng/1281019/o_index07.png" alt="image" loading="lazy"><br>
-看到了么，多加一个索引，就会多生成一颗非聚簇索引树。因此，很多文章才说，索引不能乱加。因为，有几个索引，就有几颗非聚簇索引树！你在做插入操作的时候，需要同时维护这几颗树的变化！因此，如果索引太多，插入性能就会下降!</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[mysql事务隔离级别及MVCC]]></title>
-        <id>https://esinew.github.io/post/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc/</id>
-        <link href="https://esinew.github.io/post/mysql-shi-wu-ge-chi-ji-bie-ji-mvcc/">
-        </link>
-        <updated>2020-06-24T01:43:32.000Z</updated>
-        <summary type="html"><![CDATA[<p>MySQL定义了4类隔离级别，包括一些具体规则，用来限定事物内外的哪些改变时可见的，哪些改变时不可见的，低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
-<p><strong>第一类：</strong> Read Uncommitted(读取未提交的内容)事务A/事务B    在该隔离级别，所有事物都可以看到其他未提交事务的执行结果，本隔离级别很少用于实际应用，因为他的性能页不比其他级别好多少，读取未提交的数据，也被称之为脏读（Dirty Read）。</p>
-<p><strong>第二类：</strong> Read Committed(读取提交内容)    这是大多数数据库系统的默认隔离级别（但不是mysql默认的），他满足了隔离的简单定义：一个事物在提交之前对其他事物是不可见的，这种隔离级别也支持所谓的不可重复读取（Nonerepeatable Read）,因为同一事务的其他实例在该实例处理其他期间可能会有新的commit，所以同一select可能返回不同结果。</p>
-<p><strong>第三类：</strong> Repeatable Read(可复读)    这是mysql默认的隔离级别，他确保同一事务的多个实例在并发读取数据时，会看到同样的数据行，不过理论上，这会导致另一个棘手的问题，幻读（Phantom Read），简单的说，幻读指当用户读取某一范围的数据行时，另一个事物又在该范围内插入了新行，当用户再读取该范围内的数据时，会发现有新的&quot;幻影&quot;行，Innodb和Falcon存储引擎通过多版本并发控制（MVCC）机制解决了该问题。</p>
-<p><strong>第四类：</strong> Serializerable(可串行化)    这是最高的隔离级别，他通过强制事物排序，使之不可能相互冲突，从而解决了幻读问题，简言之，它是在每个读的数据行上加共享锁，在这个级别，可能导致大量的超时现象和锁竞争。</p>
-<p>脏读：    某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个事务RollBack了操作，则后面的事物所读去的数据就是不正确的。<br>
-幻读：    在一个事务的两次查询中数据不一致，例如有一个事务查询了几列数据，而另一个事务却在此时插入了新的数据，先前的事务在接下来的查询中，就会发现有几列数据是他先前所没有的。（数据条数不同）<br>
-不可重复读：    在一个事物的两次查询中数据不一致，这可能是两次查询过程中间插入了一个事物更新的原有的数据。（同一条数据）<br>
-以上四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。<br>
-隔离级别 脏读 不可重复读 幻读读取未提交内容 v v v读取已提交内容 x v v 可重复读 x x v 可串行化 x x x<br>
-修改MySQL隔离级别：</p>
-<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em></p>
-<p><img src="https://esinew.github.io//post-images/1592963778005.jpg" alt="" loading="lazy"><br>
-修改完成后重启mysql，使其生效：</p>
-<p><u><em>sudo service mysql restart</em></u></p>
-<p><strong>Django提供了一个API来控制数据库事务</strong></p>
-<p><u><em>atomic(using=None, savepoint=True)</em></u></p>
-<p>原子性： 是由mysql的事物操作来界定的，atomic允许我们在执行代码块时，在数据库层面提供原子性保证，如果代码块成功完成，相应的变化会被提交到数据库进行commit，否则会进行rollback。</p>
-<p>atomic可以嵌套，在下面的例子里，使用while语句，当一个内部块完成后，如果某个异常在外部块被抛出，内部块上的操作仍然可以回滚（前提是外部块也被atomic装饰过）</p>
-<p><em>atomic被用作装饰器</em><br>
-<u><em>from django.db import transaction</em></u></p>
-<p><u>***@transaction.atomic***</u></p>
-<p><u><em>def viewfunc(request):</em></u></p>
-<p><u><em>do_stuff()</em></u></p>
-<p>创建保存点</p>
-<p><u><em>savepoint()</em></u></p>
-<p>提交保存点</p>
-<p><u><em>savepoint_commit</em>()</u></p>
-<p>回滚保存点</p>
-<p><u><em>savepoint_rollback</em>()</u></p>
-<p>订单并发处理悲观锁乐观锁在冲突比较少的时候采用乐观锁，减少不需要加锁释放锁的开销，可以提高性能。<br>
-在冲突比较多的时候采用悲观锁，减少重复尝试次数，乐观锁重复操作的代价比较大。</p>
-<p><strong>MySQL的MVCC及实现原理</strong></p>
-<p>首先声明，MySQL的测试环境是5.7</p>
-<p>前提概要</p>
-<p><em><u>什么是MVCC?</u></em></p>
-<p>MVCCMVCC，全称Multi-Version Concurrency Control，即多版本并发控制。MVCC是一种并发控制的方法，一般在数据库管理系统中，实现对数据库的并发访问，在编程语言中实现事务内存。MVCC在MySQL InnoDB中的实现主要是为了提高数据库并发性能，用更好的方式去处理读-写冲突，做到即使有读写冲突时，也能做到不加锁，非阻塞并发读</p>
-<p><em><u>什么是当前读和快照读？</u></em></p>
-<p>在学习MVCC多版本并发控制之前，我们必须先了解一下，什么是MySQL InnoDB下的当前读和快照读?</p>
-<p>当前读像select lock in share mode(共享锁), select for update ; update, insert ,delete(排他锁)这些操作都是一种当前读，</p>
-<p><em><u>为什么叫当前读？</u></em></p>
-<p>就是它读取的是记录的最新版本，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行加锁快照读像不加锁的select操作就是快照读，即不加锁的非阻塞读；快照读的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本。</p>
-<p>说白了MVCC就是为了实现读-写冲突不加锁，而这个读指的就是快照读, 而非当前读，当前读实际上是一种加锁的操作，是悲观锁的实现当前读，快照读和MVCC的关系准确的说，MVCC多版本并发控制指的是 “维持一个数据的多个版本，使得读写操作没有冲突” 这么一个概念。仅仅是一个理想概念而在MySQL中，实现这么一个MVCC理想概念，我们就需要MySQL提供具体的功能去实现它，而快照读就是MySQL为我们实现MVCC理想模型的其中一个具体非阻塞读功能。</p>
-<p>而相对而言，当前读就是悲观锁的具体功能实现，要说的再细致一些，快照读本身也是一个抽象概念，再深入研究。MVCC模型在MySQL中的具体实现则是由 3个隐式字段，undo日志 ，Read View 等去完成的，具体可以看下面的MVCC实现原理</p>
-<p><em><u>MVCC能解决什么问题，好处是？</u></em></p>
-<p>数据库并发场景有三种，分别为：</p>
-<p>读-读：不存在任何问题，也不需要并发控制</p>
-<p>读-写：有线程安全问题，可能会造成事务隔离性问题，可能遇到脏读，</p>
-<p>幻读，不可重复读写-写：有线程安全问题，可能会存在更新丢失问题，比如第一类更新丢失，第二类更新丢失</p>
-<p><em><u>MVCC带来的好处是？</u></em></p>
-<p>多版本并发控制（MVCC）是一种用来解决读-写冲突的无锁并发控制，也就是为事务分配单向增长的时间戳，为每个修改保存一个版本，版本与事务时间戳关联，读操作只读该事务开始前的数据库的快照。 所以MVCC可以为数据库解决以下问题在并发读写数据库时，可以做到在读操作时不用阻塞写操作，写操作也不用阻塞读操作，提高了数据库并发读写的性能同时还可以解决脏读，幻读，不可重复读等事务隔离问题，但不能解决更新丢失问题小结一下总之，MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能不佳的形式去解决读-写冲突问题而提出的解决方案，所以在数据库中有了MVCC，所以我们可以形成两个组合：</p>
-<p>MVCC + 悲观锁MVCC解决读写冲突，悲观锁解决写写冲突</p>
-<p>MVCC + 乐观锁MVCC解决读写冲突，乐观锁解决写写冲突</p>
-<p>这种组合的方式就可以最大程度的提高数据库并发性能，并解决读写冲突，和写写冲突导致的问题*<u>MYSQL 事务日志</u>*</p>
-<p>事务日志可以帮助提高事务的效率。使用事务日志，存储引擎在修改表的数据时只需要修改其内存拷贝，再把该修改行为记录到持久在硬盘上的事务日志中，而不用每次都将修改的数据本身持久到磁盘。事务日志采用的是追加的方式，因此写日志的操作是磁盘上一小块区域内的顺序I/O，而不像随机I/O需要在磁盘的多个地方移动磁头，所以采用事务日志的方式相对来说要快得多。事务日志持久以后，内存中被修改的数据在后台可以慢慢地刷回到磁盘。目前大多数存储引擎都是这样实现的，我们通常称之为预写式日志（Write-Ahead Logging），修改数据需要写两次磁盘。 如果数据的修改已经记录到事务日志并持久化，但数据本身还没有写回磁盘，此时系统崩溃，存储引擎在重启时能够自动恢复这部分修改的数据。</p>
-<p>MySQL Innodb中跟数据持久性、一致性有关的日志，有以下几种：</p>
-<p>**1.**Bin Log:是mysql服务层产生的日志，常用来进行数据恢复、数据库复制，常见的mysql主从架构，就是采用slave同步master的binlog实现的Redo Log:记录了数据操作在物理层面的修改，mysql中使用了大量缓存，修改操作时会直接修改内存，而不是立刻修改磁盘，事务进行中时会不断的产生redo log，在事务提交时进行一次flush操作，保存到磁盘中。当数据库或主机失效重启时，会根据redo log进行数据的恢复，如果redo log中有事务提交，则进行事务提交修改数据。</p>
-<p>**<u>2.</u>**Undo Log: 除了记录redo log外，当进行数据修改时还会记录undo log，undo log用于数据的撤回操作，它记录了修改的反向操作，比如，插入对应删除，修改对应修改为原来的数据，通过undo log可以实现事务回滚，并且可以根据undo log回溯到某个特定的版本的数据，实现MVCC</p>
-<p><u><em>MVCC的实现原理</em></u></p>
-<p>MVCC的目的就是多版本并发控制，在数据库中的实现，就是为了解决读写冲突，它的实现原理主要是依赖记录中的 3个隐式字段，undo日志 ，Read View 来实现的。所以我们先来看看这个三个point的概念隐式字段每行记录除了我们自定义的字段外，还有数据库隐式定义的DB_TRX_ID,DB_ROLL_PTR,DB_ROW_ID等字段</p>
-<p>DB_TRX_ID 6byte，最近修改(修改/插入)事务ID：记录创建这条记录/最后一次修改该记录的事务IDDB_ROLL_PTR 7byte，回滚指针，指向这条记录的上一个版本（存储于rollback segment里）DB_ROW_ID 6byte，隐含的自增ID（隐藏主键），如果数据表没有主键，InnoDB会自动以DB_ROW_ID产生一个聚簇索引实际还有一个删除flag隐藏字段, 既记录被更新或删除并不代表真的删除，而是删除flag变了<br>
-如上图，DB_ROW_ID是数据库默认为该行记录生成的唯一隐式主键，DB_TRX_ID是当前操作该记录的事务ID,而DB_ROLL_PTR是一个回滚指针，用于配合undo日志，指向上一个旧版本undo日志</p>
-<p>undo log主要分为两种：</p>
-<p>insert undo log代表事务在insert新记录时产生的undo log, 只在事务回滚时需要，并且在事务提交后可以被立即丢弃</p>
-<p>update undo log事务在进行update或delete时产生的undo log; 不仅在事务回滚时需要，在快照读时也需要；所以不能随便删除，只有在快速读或事务回滚不涉及该日志时，对应的日志才会被purge线程统一清除purge</p>
-<p>从前面的分析可以看出，为了实现InnoDB的MVCC机制，更新或者删除操作都只是设置一下老记录的deleted_bit，并不真正将过时的记录删除。为了节省磁盘空间，InnoDB有专门的purge线程来清理deleted_bit为true的记录。为了不影响MVCC的正常工作，purge线程自己也维护了一个read view（这个read view相当于系统中最老活跃事务的read view）;如果某个记录的deleted_bit为true，并且DB_TRX_ID相对于purge线程的read view可见即当前记录没有相关活跃事务在操作时，那么这条记录一定是可以被安全清除的。对MVCC有帮助的实质是update undo log ，undo log实际上就是存在rollback segment中旧记录链，它的执行流程如下：</p>
-<p>一、 比如一个有个事务插入persion表插入了一条新记录，记录如下，name为Jerry, age为24岁，隐式主键是1，事务ID和回滚指针，我们假设为NULL<br>
-二、 现在来了一个事务1对该记录的name做出了修改，改为Tom在事务1修改该行(记录)数据时，数据库会先对该行加排他锁然后把该行数据拷贝到undo log中，作为旧记录，既在undo log中有当前行的拷贝副本拷贝完毕后，修改该行name为Tom，并且修改隐藏字段的事务ID为当前事务1的ID, 我们默认从1开始，之后递增，回滚指针指向拷贝到undo log的副本记录，既表示我的上一个版本就是它事务提交后，释放锁</p>
-<p>三、 又来了个事务2修改person表的同一个记录，将age修改为30岁在事务2修改该行数据时，数据库也先为该行加锁然后把该行数据拷贝到undo log中，作为旧记录，发现该行记录已经有undo log了，那么最新的旧数据作为链表的表头，插在该行记录的undo log最前面修改该行age为30岁，并且修改隐藏字段的事务ID为当前事务2的ID, 那就是2，回滚指针指向刚刚拷贝到undo log的副本记录事务提交，释放锁<br>
-从上面，我们就可以看出，不同事务或者相同事务的对同一记录的修改，会导致该记录的undo log成为一条记录版本线性表，既链表，undo log的链首就是最新的旧记录，链尾就是最早的旧记录（当然就像之前说的该undo log的节点可能是会purge线程清除掉，向图中的第一条insert undo log，其实在事务提交之后可能就被删除丢失了，不过这里为了演示，所以还放在这里）Read View(读视图)</p>
-<p><em><u>什么是Read View?</u></em></p>
-<p>什么是Read View，说白了Read View就是事务进行快照读操作的时候生产的读视图(Read View)，在该事务执行的快照读的那一刻，会生成数据库系统当前的一个快照，记录并维护系统当前活跃事务的ID(当每个事务开启时，都会被分配一个ID, 这个ID是递增的，所以最新的事务，ID值越大)。所以我们知道 Read View主要是用来做可见性判断的, 即当我们某个事务执行快照读的时候，对该记录创建一个Read View读视图，把它比作条件用来判断当前事务能够看到哪个版本的数据，既可能是当前最新的数据，也有可能是该行记录的undo log里面的某个版本的数据。</p>
-<p>Read View遵循一个可见性算法，主要是将要被修改的数据的最新记录中的DB_TRX_ID（即当前事务ID）取出来，与系统当前其他活跃事务的ID去对比（由Read View维护），如果DB_TRX_ID跟Read View的属性做了某些比较，不符合可见性，那就通过DB_ROLL_PTR回滚指针去取出Undo Log中的DB_TRX_ID再比较，即遍历链表的DB_TRX_ID（从链首到链尾，即从最近的一次修改查起），直到找到满足特定条件的DB_TRX_ID, 那么这个DB_TRX_ID所在的旧记录就是当前事务能看见的最新老版本那么这个判断条件是什么呢？</p>
-<p>如上，它是一段MySQL判断可见性的一段源码，即changes_visible方法（不完全哈，但能看出大致逻辑），该方法展示了我们拿DB_TRX_ID去跟Read View某些属性进行怎么样的比较在展示之前，我先简化一下Read View，我们可以把Read View简单的理解成有三个全局属性。</p>
-<p>trx_list（名字我随便取的）一个数值列表，用来维护Read View生成时刻系统正活跃的事务IDup_limit_id记录trx_list列表中事务ID最小的IDlow_limit_idReadView生成时刻系统尚未分配的下一个事务ID，也就是目前已出现过的事务ID的最大值+1，首先比较DB_TRX_ID &lt; up_limit_id, 如果小于，则当前事务能看到DB_TRX_ID 所在的记录，如果大于等于进入下一个判断。接下来判断 DB_TRX_ID 大于等于 low_limit_id , 如果大于等于则代表DB_TRX_ID 所在的记录在Read View生成后才出现的，那对当前事务肯定不可见，如果小于则进入下一个判断判断DB_TRX_ID 是否在活跃事务之中，trx_list.contains(DB_TRX_ID)，如果在，则代表我Read View生成时刻，你这个事务还在活跃，还没有Commit，你修改的数据，我当前事务也是看不见的；如果不在，则说明，你这个事务在Read View生成之前就已经Commit了，你修改的结果，我当前事务是能看见的。</p>
-<p>整体流程</p>
-<p>我们在了解了隐式字段，undo log， 以及Read View的概念之后，就可以来看看MVCC实现的整体流程是怎么样了整体的流程是怎么样的呢？我们可以模拟一下：</p>
-<p>当事务2对某行数据执行了快照读，数据库为该行数据生成一个Read View读视图，假设当前事务ID为2，此时还有事务1和事务3在活跃中，事务4在事务2快照读前一刻提交更新了，所以Read View记录了系统当前活跃事务1，3的ID，维护在一个列表上，假设我们称为trx_list。</p>
-<p>事务1事务2事务3事务4事务开始事务开始事务开始事务开始………修改且已提交进行中快照读进行中………</p>
-<p>Read View不仅仅会通过一个列表trx_list来维护事务2执行快照读那刻系统正活跃的事务ID，还会有两个属性up_limit_id（记录trx_list列表中事务ID最小的ID），low_limit_id(记录trx_list列表中事务ID最大的ID，也有人说快照读那刻系统尚未分配的下一个事务ID也就是目前已出现过的事务ID的最大值+1，我更倾向于后者 ) ；所以在这里例子中up_limit_id就是1，low_limit_id就是4 + 1 = 5，trx_list集合的值是1,3，Read View如下图：</p>
-<p>我们的例子中，只有事务4修改过该行记录，并在事务2执行快照读前，就提交了事务，所以当前该行当前数据的undo log如下图所示；我们的事务2在快照读该行记录的时候，就会拿该行记录的DB_TRX_ID去跟up_limit_id,low_limit_id和活跃事务ID列表(trx_list)进行比较，判断当前事务2能看到该记录的版本是哪个。<br>
-所以先拿该记录DB_TRX_ID字段记录的事务ID 4去跟Read View的的up_limit_id比较，看4是否小于up_limit_id(1)，所以不符合条件，继续判断 4 是否大于等于 low_limit_id(5)，也不符合条件，最后判断4是否处于trx_list中的活跃事务, 最后发现事务ID为4的事务不在当前活跃事务列表中, 符合可见性条件，所以事务4修改后提交的最新结果对事务2快照读时是可见的，所以事务2能读到的最新数据记录是事务4所提交的版本，而事务4提交的版本也是全局角度上最新的版本。</p>
-<p>也正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同。</p>
-<p><strong><u><em>MVCC相关问题</em></u></strong></p>
-<p><u><em>RR是如何在RC级的基础上解决不可重复读的？</em></u></p>
-<p>当前读和快照读在RR级别下的区别：</p>
-<p>表1:事务A事务B开启事务开启事务快照读(无影响)查询金额为500快照读查询金额为500更新金额为400提交事务select 快照读金额为500select lock in share mode当前读金额为400在上表的顺序下，事务B的在事务A提交修改后的快照读是旧版本数据，而当前读是实时新数据400。</p>
-<p>表2:事务A事务B开启事务开启事务快照读（无影响）查询金额为500更新金额为400提交事务select 快照读金额为400select lock in share mode当前读金额为400。</p>
-<p>而在表2这里的顺序中，事务B在事务A提交后的快照读和当前读都是实时的新数据400，这是为什么呢？这里与上表的唯一区别仅仅是表1的事务B在事务A修改金额前快照读过一次金额数据，而表2的事务B在事务A修改金额前没有进行过快照读。所以我们知道事务中快照读的结果是非常依赖该事务首次出现快照读的地方，即某个事务中首次出现快照读的地方非常关键，它有决定该事务后续快照读结果的能力，我们这里测试的是更新，同时删除和更新也是一样的，如果事务B的快照读是在事务A操作之后进行的，事务B的快照读也是能读取到最新的数据的。</p>
-<p><em><u>RC,RR级别下的InnoDB快照读有什么不同？</u></em></p>
-<p>正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同。在RR级别下的某个事务的对某条记录的第一次快照读会创建一个快照及Read View, 将当前系统活跃的其他事务记录起来，此后在调用快照读的时候，还是使用的是同一个Read View，所以只要当前事务在其他事务提交更新之前使用过快照读，那么之后的快照读使用的都是同一个Read View，所以对之后的修改不可见；即RR级别下，快照读生成Read View时，Read View会记录此时所有其他活动事务的快照，这些事务的修改对于当前事务都是不可见的。而早于Read View创建的事务所做的修改均是可见。而在RC级别下的，事务中，每次快照读都会新生成一个快照和Read View, 这就是我们在RC级别下的事务中可以看到别的事务提交的更新的原因。</p>
-<p><strong><u>MVCC原理：</u></strong></p>
-<p>MVCC（ Multi-Version Concurrency Control ，多版本并发控制）指的就是在使用READ COMMITTD、REPEATABLE READ这两种隔离级别的事务在执行普通的SEELCT操作时访问记录的版本链的过程。可以使不同事务的读-写、写-读操作并发执行，从而提升系统性能。 READ COMMITTD、 REPEATABLE READ这两个隔离级别的一个很大不同就是：生成ReadView的时机不同， READ COMMITTD在每一次进行普通SELECT操作前都会生成一个ReadView，而REPEATABLE READ只在第一次进行普通SELECT操作前生成一个ReadView，之后的查询操作都重复使用这个ReadView就好了。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>MySQL定义了4类隔离级别，包括一些具体规则，用来限定事物内外的哪些改变时可见的，哪些改变时不可见的，低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
-<p><strong>第一类：</strong> Read Uncommitted(读取未提交的内容)事务A/事务B    在该隔离级别，所有事物都可以看到其他未提交事务的执行结果，本隔离级别很少用于实际应用，因为他的性能页不比其他级别好多少，读取未提交的数据，也被称之为脏读（Dirty Read）。</p>
-<p><strong>第二类：</strong> Read Committed(读取提交内容)    这是大多数数据库系统的默认隔离级别（但不是mysql默认的），他满足了隔离的简单定义：一个事物在提交之前对其他事物是不可见的，这种隔离级别也支持所谓的不可重复读取（Nonerepeatable Read）,因为同一事务的其他实例在该实例处理其他期间可能会有新的commit，所以同一select可能返回不同结果。</p>
-<p><strong>第三类：</strong> Repeatable Read(可复读)    这是mysql默认的隔离级别，他确保同一事务的多个实例在并发读取数据时，会看到同样的数据行，不过理论上，这会导致另一个棘手的问题，幻读（Phantom Read），简单的说，幻读指当用户读取某一范围的数据行时，另一个事物又在该范围内插入了新行，当用户再读取该范围内的数据时，会发现有新的&quot;幻影&quot;行，Innodb和Falcon存储引擎通过多版本并发控制（MVCC）机制解决了该问题。</p>
-<p><strong>第四类：</strong> Serializerable(可串行化)    这是最高的隔离级别，他通过强制事物排序，使之不可能相互冲突，从而解决了幻读问题，简言之，它是在每个读的数据行上加共享锁，在这个级别，可能导致大量的超时现象和锁竞争。</p>
-<p>脏读：    某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个事务RollBack了操作，则后面的事物所读去的数据就是不正确的。<br>
-幻读：    在一个事务的两次查询中数据不一致，例如有一个事务查询了几列数据，而另一个事务却在此时插入了新的数据，先前的事务在接下来的查询中，就会发现有几列数据是他先前所没有的。（数据条数不同）<br>
-不可重复读：    在一个事物的两次查询中数据不一致，这可能是两次查询过程中间插入了一个事物更新的原有的数据。（同一条数据）<br>
-以上四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。<br>
-隔离级别 脏读 不可重复读 幻读读取未提交内容 v v v读取已提交内容 x v v 可重复读 x x v 可串行化 x x x<br>
-修改MySQL隔离级别：</p>
-<p><em>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf</em></p>
-<p><img src="https://esinew.github.io//post-images/1592963778005.jpg" alt="" loading="lazy"><br>
-修改完成后重启mysql，使其生效：</p>
-<p><u><em>sudo service mysql restart</em></u></p>
-<p><strong>Django提供了一个API来控制数据库事务</strong></p>
-<p><u><em>atomic(using=None, savepoint=True)</em></u></p>
-<p>原子性： 是由mysql的事物操作来界定的，atomic允许我们在执行代码块时，在数据库层面提供原子性保证，如果代码块成功完成，相应的变化会被提交到数据库进行commit，否则会进行rollback。</p>
-<p>atomic可以嵌套，在下面的例子里，使用while语句，当一个内部块完成后，如果某个异常在外部块被抛出，内部块上的操作仍然可以回滚（前提是外部块也被atomic装饰过）</p>
-<p><em>atomic被用作装饰器</em><br>
-<u><em>from django.db import transaction</em></u></p>
-<p><u>***@transaction.atomic***</u></p>
-<p><u><em>def viewfunc(request):</em></u></p>
-<p><u><em>do_stuff()</em></u></p>
-<p>创建保存点</p>
-<p><u><em>savepoint()</em></u></p>
-<p>提交保存点</p>
-<p><u><em>savepoint_commit</em>()</u></p>
-<p>回滚保存点</p>
-<p><u><em>savepoint_rollback</em>()</u></p>
-<p>订单并发处理悲观锁乐观锁在冲突比较少的时候采用乐观锁，减少不需要加锁释放锁的开销，可以提高性能。<br>
-在冲突比较多的时候采用悲观锁，减少重复尝试次数，乐观锁重复操作的代价比较大。</p>
-<p><strong>MySQL的MVCC及实现原理</strong></p>
-<p>首先声明，MySQL的测试环境是5.7</p>
-<p>前提概要</p>
-<p><em><u>什么是MVCC?</u></em></p>
-<p>MVCCMVCC，全称Multi-Version Concurrency Control，即多版本并发控制。MVCC是一种并发控制的方法，一般在数据库管理系统中，实现对数据库的并发访问，在编程语言中实现事务内存。MVCC在MySQL InnoDB中的实现主要是为了提高数据库并发性能，用更好的方式去处理读-写冲突，做到即使有读写冲突时，也能做到不加锁，非阻塞并发读</p>
-<p><em><u>什么是当前读和快照读？</u></em></p>
-<p>在学习MVCC多版本并发控制之前，我们必须先了解一下，什么是MySQL InnoDB下的当前读和快照读?</p>
-<p>当前读像select lock in share mode(共享锁), select for update ; update, insert ,delete(排他锁)这些操作都是一种当前读，</p>
-<p><em><u>为什么叫当前读？</u></em></p>
-<p>就是它读取的是记录的最新版本，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行加锁快照读像不加锁的select操作就是快照读，即不加锁的非阻塞读；快照读的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本。</p>
-<p>说白了MVCC就是为了实现读-写冲突不加锁，而这个读指的就是快照读, 而非当前读，当前读实际上是一种加锁的操作，是悲观锁的实现当前读，快照读和MVCC的关系准确的说，MVCC多版本并发控制指的是 “维持一个数据的多个版本，使得读写操作没有冲突” 这么一个概念。仅仅是一个理想概念而在MySQL中，实现这么一个MVCC理想概念，我们就需要MySQL提供具体的功能去实现它，而快照读就是MySQL为我们实现MVCC理想模型的其中一个具体非阻塞读功能。</p>
-<p>而相对而言，当前读就是悲观锁的具体功能实现，要说的再细致一些，快照读本身也是一个抽象概念，再深入研究。MVCC模型在MySQL中的具体实现则是由 3个隐式字段，undo日志 ，Read View 等去完成的，具体可以看下面的MVCC实现原理</p>
-<p><em><u>MVCC能解决什么问题，好处是？</u></em></p>
-<p>数据库并发场景有三种，分别为：</p>
-<p>读-读：不存在任何问题，也不需要并发控制</p>
-<p>读-写：有线程安全问题，可能会造成事务隔离性问题，可能遇到脏读，</p>
-<p>幻读，不可重复读写-写：有线程安全问题，可能会存在更新丢失问题，比如第一类更新丢失，第二类更新丢失</p>
-<p><em><u>MVCC带来的好处是？</u></em></p>
-<p>多版本并发控制（MVCC）是一种用来解决读-写冲突的无锁并发控制，也就是为事务分配单向增长的时间戳，为每个修改保存一个版本，版本与事务时间戳关联，读操作只读该事务开始前的数据库的快照。 所以MVCC可以为数据库解决以下问题在并发读写数据库时，可以做到在读操作时不用阻塞写操作，写操作也不用阻塞读操作，提高了数据库并发读写的性能同时还可以解决脏读，幻读，不可重复读等事务隔离问题，但不能解决更新丢失问题小结一下总之，MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能不佳的形式去解决读-写冲突问题而提出的解决方案，所以在数据库中有了MVCC，所以我们可以形成两个组合：</p>
-<p>MVCC + 悲观锁MVCC解决读写冲突，悲观锁解决写写冲突</p>
-<p>MVCC + 乐观锁MVCC解决读写冲突，乐观锁解决写写冲突</p>
-<p>这种组合的方式就可以最大程度的提高数据库并发性能，并解决读写冲突，和写写冲突导致的问题*<u>MYSQL 事务日志</u>*</p>
-<p>事务日志可以帮助提高事务的效率。使用事务日志，存储引擎在修改表的数据时只需要修改其内存拷贝，再把该修改行为记录到持久在硬盘上的事务日志中，而不用每次都将修改的数据本身持久到磁盘。事务日志采用的是追加的方式，因此写日志的操作是磁盘上一小块区域内的顺序I/O，而不像随机I/O需要在磁盘的多个地方移动磁头，所以采用事务日志的方式相对来说要快得多。事务日志持久以后，内存中被修改的数据在后台可以慢慢地刷回到磁盘。目前大多数存储引擎都是这样实现的，我们通常称之为预写式日志（Write-Ahead Logging），修改数据需要写两次磁盘。 如果数据的修改已经记录到事务日志并持久化，但数据本身还没有写回磁盘，此时系统崩溃，存储引擎在重启时能够自动恢复这部分修改的数据。</p>
-<p>MySQL Innodb中跟数据持久性、一致性有关的日志，有以下几种：</p>
-<p>**1.**Bin Log:是mysql服务层产生的日志，常用来进行数据恢复、数据库复制，常见的mysql主从架构，就是采用slave同步master的binlog实现的Redo Log:记录了数据操作在物理层面的修改，mysql中使用了大量缓存，修改操作时会直接修改内存，而不是立刻修改磁盘，事务进行中时会不断的产生redo log，在事务提交时进行一次flush操作，保存到磁盘中。当数据库或主机失效重启时，会根据redo log进行数据的恢复，如果redo log中有事务提交，则进行事务提交修改数据。</p>
-<p>**<u>2.</u>**Undo Log: 除了记录redo log外，当进行数据修改时还会记录undo log，undo log用于数据的撤回操作，它记录了修改的反向操作，比如，插入对应删除，修改对应修改为原来的数据，通过undo log可以实现事务回滚，并且可以根据undo log回溯到某个特定的版本的数据，实现MVCC</p>
-<p><u><em>MVCC的实现原理</em></u></p>
-<p>MVCC的目的就是多版本并发控制，在数据库中的实现，就是为了解决读写冲突，它的实现原理主要是依赖记录中的 3个隐式字段，undo日志 ，Read View 来实现的。所以我们先来看看这个三个point的概念隐式字段每行记录除了我们自定义的字段外，还有数据库隐式定义的DB_TRX_ID,DB_ROLL_PTR,DB_ROW_ID等字段</p>
-<p>DB_TRX_ID 6byte，最近修改(修改/插入)事务ID：记录创建这条记录/最后一次修改该记录的事务IDDB_ROLL_PTR 7byte，回滚指针，指向这条记录的上一个版本（存储于rollback segment里）DB_ROW_ID 6byte，隐含的自增ID（隐藏主键），如果数据表没有主键，InnoDB会自动以DB_ROW_ID产生一个聚簇索引实际还有一个删除flag隐藏字段, 既记录被更新或删除并不代表真的删除，而是删除flag变了<br>
-如上图，DB_ROW_ID是数据库默认为该行记录生成的唯一隐式主键，DB_TRX_ID是当前操作该记录的事务ID,而DB_ROLL_PTR是一个回滚指针，用于配合undo日志，指向上一个旧版本undo日志</p>
-<p>undo log主要分为两种：</p>
-<p>insert undo log代表事务在insert新记录时产生的undo log, 只在事务回滚时需要，并且在事务提交后可以被立即丢弃</p>
-<p>update undo log事务在进行update或delete时产生的undo log; 不仅在事务回滚时需要，在快照读时也需要；所以不能随便删除，只有在快速读或事务回滚不涉及该日志时，对应的日志才会被purge线程统一清除purge</p>
-<p>从前面的分析可以看出，为了实现InnoDB的MVCC机制，更新或者删除操作都只是设置一下老记录的deleted_bit，并不真正将过时的记录删除。为了节省磁盘空间，InnoDB有专门的purge线程来清理deleted_bit为true的记录。为了不影响MVCC的正常工作，purge线程自己也维护了一个read view（这个read view相当于系统中最老活跃事务的read view）;如果某个记录的deleted_bit为true，并且DB_TRX_ID相对于purge线程的read view可见即当前记录没有相关活跃事务在操作时，那么这条记录一定是可以被安全清除的。对MVCC有帮助的实质是update undo log ，undo log实际上就是存在rollback segment中旧记录链，它的执行流程如下：</p>
-<p>一、 比如一个有个事务插入persion表插入了一条新记录，记录如下，name为Jerry, age为24岁，隐式主键是1，事务ID和回滚指针，我们假设为NULL<br>
-二、 现在来了一个事务1对该记录的name做出了修改，改为Tom在事务1修改该行(记录)数据时，数据库会先对该行加排他锁然后把该行数据拷贝到undo log中，作为旧记录，既在undo log中有当前行的拷贝副本拷贝完毕后，修改该行name为Tom，并且修改隐藏字段的事务ID为当前事务1的ID, 我们默认从1开始，之后递增，回滚指针指向拷贝到undo log的副本记录，既表示我的上一个版本就是它事务提交后，释放锁</p>
-<p>三、 又来了个事务2修改person表的同一个记录，将age修改为30岁在事务2修改该行数据时，数据库也先为该行加锁然后把该行数据拷贝到undo log中，作为旧记录，发现该行记录已经有undo log了，那么最新的旧数据作为链表的表头，插在该行记录的undo log最前面修改该行age为30岁，并且修改隐藏字段的事务ID为当前事务2的ID, 那就是2，回滚指针指向刚刚拷贝到undo log的副本记录事务提交，释放锁<br>
-从上面，我们就可以看出，不同事务或者相同事务的对同一记录的修改，会导致该记录的undo log成为一条记录版本线性表，既链表，undo log的链首就是最新的旧记录，链尾就是最早的旧记录（当然就像之前说的该undo log的节点可能是会purge线程清除掉，向图中的第一条insert undo log，其实在事务提交之后可能就被删除丢失了，不过这里为了演示，所以还放在这里）Read View(读视图)</p>
-<p><em><u>什么是Read View?</u></em></p>
-<p>什么是Read View，说白了Read View就是事务进行快照读操作的时候生产的读视图(Read View)，在该事务执行的快照读的那一刻，会生成数据库系统当前的一个快照，记录并维护系统当前活跃事务的ID(当每个事务开启时，都会被分配一个ID, 这个ID是递增的，所以最新的事务，ID值越大)。所以我们知道 Read View主要是用来做可见性判断的, 即当我们某个事务执行快照读的时候，对该记录创建一个Read View读视图，把它比作条件用来判断当前事务能够看到哪个版本的数据，既可能是当前最新的数据，也有可能是该行记录的undo log里面的某个版本的数据。</p>
-<p>Read View遵循一个可见性算法，主要是将要被修改的数据的最新记录中的DB_TRX_ID（即当前事务ID）取出来，与系统当前其他活跃事务的ID去对比（由Read View维护），如果DB_TRX_ID跟Read View的属性做了某些比较，不符合可见性，那就通过DB_ROLL_PTR回滚指针去取出Undo Log中的DB_TRX_ID再比较，即遍历链表的DB_TRX_ID（从链首到链尾，即从最近的一次修改查起），直到找到满足特定条件的DB_TRX_ID, 那么这个DB_TRX_ID所在的旧记录就是当前事务能看见的最新老版本那么这个判断条件是什么呢？</p>
-<p>如上，它是一段MySQL判断可见性的一段源码，即changes_visible方法（不完全哈，但能看出大致逻辑），该方法展示了我们拿DB_TRX_ID去跟Read View某些属性进行怎么样的比较在展示之前，我先简化一下Read View，我们可以把Read View简单的理解成有三个全局属性。</p>
-<p>trx_list（名字我随便取的）一个数值列表，用来维护Read View生成时刻系统正活跃的事务IDup_limit_id记录trx_list列表中事务ID最小的IDlow_limit_idReadView生成时刻系统尚未分配的下一个事务ID，也就是目前已出现过的事务ID的最大值+1，首先比较DB_TRX_ID &lt; up_limit_id, 如果小于，则当前事务能看到DB_TRX_ID 所在的记录，如果大于等于进入下一个判断。接下来判断 DB_TRX_ID 大于等于 low_limit_id , 如果大于等于则代表DB_TRX_ID 所在的记录在Read View生成后才出现的，那对当前事务肯定不可见，如果小于则进入下一个判断判断DB_TRX_ID 是否在活跃事务之中，trx_list.contains(DB_TRX_ID)，如果在，则代表我Read View生成时刻，你这个事务还在活跃，还没有Commit，你修改的数据，我当前事务也是看不见的；如果不在，则说明，你这个事务在Read View生成之前就已经Commit了，你修改的结果，我当前事务是能看见的。</p>
-<p>整体流程</p>
-<p>我们在了解了隐式字段，undo log， 以及Read View的概念之后，就可以来看看MVCC实现的整体流程是怎么样了整体的流程是怎么样的呢？我们可以模拟一下：</p>
-<p>当事务2对某行数据执行了快照读，数据库为该行数据生成一个Read View读视图，假设当前事务ID为2，此时还有事务1和事务3在活跃中，事务4在事务2快照读前一刻提交更新了，所以Read View记录了系统当前活跃事务1，3的ID，维护在一个列表上，假设我们称为trx_list。</p>
-<p>事务1事务2事务3事务4事务开始事务开始事务开始事务开始………修改且已提交进行中快照读进行中………</p>
-<p>Read View不仅仅会通过一个列表trx_list来维护事务2执行快照读那刻系统正活跃的事务ID，还会有两个属性up_limit_id（记录trx_list列表中事务ID最小的ID），low_limit_id(记录trx_list列表中事务ID最大的ID，也有人说快照读那刻系统尚未分配的下一个事务ID也就是目前已出现过的事务ID的最大值+1，我更倾向于后者 ) ；所以在这里例子中up_limit_id就是1，low_limit_id就是4 + 1 = 5，trx_list集合的值是1,3，Read View如下图：</p>
-<p>我们的例子中，只有事务4修改过该行记录，并在事务2执行快照读前，就提交了事务，所以当前该行当前数据的undo log如下图所示；我们的事务2在快照读该行记录的时候，就会拿该行记录的DB_TRX_ID去跟up_limit_id,low_limit_id和活跃事务ID列表(trx_list)进行比较，判断当前事务2能看到该记录的版本是哪个。<br>
-所以先拿该记录DB_TRX_ID字段记录的事务ID 4去跟Read View的的up_limit_id比较，看4是否小于up_limit_id(1)，所以不符合条件，继续判断 4 是否大于等于 low_limit_id(5)，也不符合条件，最后判断4是否处于trx_list中的活跃事务, 最后发现事务ID为4的事务不在当前活跃事务列表中, 符合可见性条件，所以事务4修改后提交的最新结果对事务2快照读时是可见的，所以事务2能读到的最新数据记录是事务4所提交的版本，而事务4提交的版本也是全局角度上最新的版本。</p>
-<p>也正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同。</p>
-<p><strong><u><em>MVCC相关问题</em></u></strong></p>
-<p><u><em>RR是如何在RC级的基础上解决不可重复读的？</em></u></p>
-<p>当前读和快照读在RR级别下的区别：</p>
-<p>表1:事务A事务B开启事务开启事务快照读(无影响)查询金额为500快照读查询金额为500更新金额为400提交事务select 快照读金额为500select lock in share mode当前读金额为400在上表的顺序下，事务B的在事务A提交修改后的快照读是旧版本数据，而当前读是实时新数据400。</p>
-<p>表2:事务A事务B开启事务开启事务快照读（无影响）查询金额为500更新金额为400提交事务select 快照读金额为400select lock in share mode当前读金额为400。</p>
-<p>而在表2这里的顺序中，事务B在事务A提交后的快照读和当前读都是实时的新数据400，这是为什么呢？这里与上表的唯一区别仅仅是表1的事务B在事务A修改金额前快照读过一次金额数据，而表2的事务B在事务A修改金额前没有进行过快照读。所以我们知道事务中快照读的结果是非常依赖该事务首次出现快照读的地方，即某个事务中首次出现快照读的地方非常关键，它有决定该事务后续快照读结果的能力，我们这里测试的是更新，同时删除和更新也是一样的，如果事务B的快照读是在事务A操作之后进行的，事务B的快照读也是能读取到最新的数据的。</p>
-<p><em><u>RC,RR级别下的InnoDB快照读有什么不同？</u></em></p>
-<p>正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同。在RR级别下的某个事务的对某条记录的第一次快照读会创建一个快照及Read View, 将当前系统活跃的其他事务记录起来，此后在调用快照读的时候，还是使用的是同一个Read View，所以只要当前事务在其他事务提交更新之前使用过快照读，那么之后的快照读使用的都是同一个Read View，所以对之后的修改不可见；即RR级别下，快照读生成Read View时，Read View会记录此时所有其他活动事务的快照，这些事务的修改对于当前事务都是不可见的。而早于Read View创建的事务所做的修改均是可见。而在RC级别下的，事务中，每次快照读都会新生成一个快照和Read View, 这就是我们在RC级别下的事务中可以看到别的事务提交的更新的原因。</p>
-<p><strong><u>MVCC原理：</u></strong></p>
-<p>MVCC（ Multi-Version Concurrency Control ，多版本并发控制）指的就是在使用READ COMMITTD、REPEATABLE READ这两种隔离级别的事务在执行普通的SEELCT操作时访问记录的版本链的过程。可以使不同事务的读-写、写-读操作并发执行，从而提升系统性能。 READ COMMITTD、 REPEATABLE READ这两个隔离级别的一个很大不同就是：生成ReadView的时机不同， READ COMMITTD在每一次进行普通SELECT操作前都会生成一个ReadView，而REPEATABLE READ只在第一次进行普通SELECT操作前生成一个ReadView，之后的查询操作都重复使用这个ReadView就好了。</p>
-<!-- more -->
 ]]></content>
     </entry>
 </feed>

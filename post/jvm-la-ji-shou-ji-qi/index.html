@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-<title>BIO,NIO,AIO整理 - 每一步都是新生</title>
+<title> jvm垃圾收集器 - 每一步都是新生</title>
 <meta name="description" content="温故而知新">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -130,48 +130,49 @@
                     <div class="col-12 col-lg-10">
                       <div class="layout-post-main m-right m-md-right">
                         <div class="layout-post-header">
-                          <h1 class="layout-post-title">BIO,NIO,AIO整理</h1>
+                          <h1 class="layout-post-title"> jvm垃圾收集器</h1>
                           <div class="layout-post-meta">
                             <div class="item">
                               
                             </div>
                             <div class="item">
-                              <span>2020-07-03</span>
+                              <span>2020-07-09</span>
                             </div>
                           </div>
                         </div>
                         <div class="layout-post-content">
                           <div class="layout-post-item">
                             
-                            <p>以银行取款为例：</p>
-<pre><code>同步 ： 自己亲自出马持银行卡到银行取钱（使用同步IO时，Java自己处理IO读写）。
-
-异步 ： 委托一小弟拿银行卡到银行取钱，然后给你（使用异步IO时，Java将IO读写委托给OS处理，需要将数据缓冲区地址和大小传给OS(银行卡和密码)，OS需要支持异步IO操作API）。
-
-阻塞 ： ATM排队取款，你只能等待（使用阻塞IO时，Java调用会一直阻塞到读写完成才返回）。
-
-非阻塞 ： 柜台取款，取个号，然后坐在椅子上做其它事，等号广播会通知你办理，没到号你就不能去，你可以不断问大堂经理排到了没有，大堂经理如果说还没到你就不能去（使用非阻塞IO时，如果不能读写Java调用会马上返回，当IO事件分发器会通知可读写时再继续进行读写，不断循环直到读写完成）。
-</code></pre>
-<p>Java对BIO、NIO、AIO的支持：</p>
-<pre><code>Java BIO (blocking I/O)： 同步并阻塞，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销，当然可以通过线程池机制改善。
-
-Java NIO (non-blocking I/O)： 同步非阻塞，服务器实现模式为一个请求一个线程，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有I/O请求时才启动一个线程进行处理。
-
-Java AIO(NIO.2) (Asynchronous I/O) ： 异步非阻塞，服务器实现模式为一个有效请求一个线程，客户端的I/O请求都是由OS先完成了再通知服务器应用去启动线程进行处理，
-</code></pre>
-<p>BIO、NIO、AIO适用场景分析:</p>
-<pre><code>BIO方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4以前的唯一选择，但程序直观简单易理解。
-
-NIO方式适用于连接数目多且连接比较短（轻操作）的架构，比如聊天服务器，并发局限于应用中，编程比较复杂，JDK1.4开始支持。
-
-AIO方式使用于连接数目多且连接比较长（重操作）的架构，比如相册服务器，充分调用OS参与并发操作，编程比较复杂，JDK7开始支持。</code></pre>
+                            <p class="with-img"><img src="https://esinew.github.io//post-images/jvm-la-ji-shou-ji-qi.png"
+                                class="attachment-full size-full wp-post-image" alt=" jvm垃圾收集器" /></p>
+                            
+                            <p><img src="https://esinew.github.io//post-images/1594302276635.jpg" alt="" loading="lazy"><br>
+垃圾收集器在JDK1.8之前有七个，JDK11更新了<strong>ZGC</strong>收集器。</p>
+<p><strong>Serial</strong>（Client模式下）是最基本的垃圾收集器使用的是<strong>复制算法</strong>，且为单线程，用于新生代（新生代存活对象少，只需要复制少量对象即可），垃圾回收过程中需要暂停其他所有线程。</p>
+<p><strong>ParNew</strong>（Server模式下）是<strong>Serial</strong>的多线程版本，虽然是多线程，但是当有线程开始清除垃圾时仍需要暂停其他所有线程。</p>
+<p><strong>Parallel Scavenge</strong>（多线程）同样用于新生代，采用的也是复制算法。和上述不同的是<strong>Parallel Scavenge</strong>重点关注的是如何工作能使程序达到一个可控的高吞吐量。高吞吐量可以最高效率的利用CPU时间，尽快的完成程序的运算任务，适用于后台运算而不需要太多交互的任务。（自适应调节策略）。</p>
+<p><u><em>吞吐量=运行代码的时间/（运行代码的时间+垃圾收集时间）</em></u></p>
+<p><strong>Serial Old</strong>老年代、单线程、标记-整理算法。</p>
+<p><strong>Parallel Old</strong>老年代、多线程、标记-整理算法。为老年代提供高吞吐量（JDK1.6），通常<strong>Parallel Scavenge</strong>搭配<strong>Parallel Old</strong>。</p>
+<p><strong>CMS</strong>（多线程标记清除算法Concurrent mark sweep）老年代，主要目的是<em>获取最短垃圾回收停顿时间</em>。工作过程分为四个阶段：</p>
+<p>1.初始标记：标记GC Roots直接关联的对象，速度快，仍需暂停所用工作线程。</p>
+<p>2.并发标记：GC Roots 跟踪，不需要暂停工作线程。（并发）</p>
+<p>3.重新标记：修正在并发标记期间因为用户程序继续运行而导致标记产生的那一部分对象的标记记录（暂停所用工作线程）。</p>
+<p>4.并发清除：清除GC Roots不可达对象（并发）。</p>
+<p>其中2、4时间最长</p>
+<figure data-type="image" tabindex="1"><img src="https://esinew.github.io//post-images/1594302261968.jpg" alt="" loading="lazy"></figure>
+<p><strong>G1收集器</strong>（jDK1.8最好的收集器）</p>
+<p>有以下优点：</p>
+<p>1.标记-整理算法，不产生内存碎片。</p>
+<p>2.可以非常精确的控制停顿时间，在不牺牲吞吐量的前提下，实现低停顿垃圾的垃圾回收。</p>
+<p><em>实现原理</em>：将内存划分为大小固定的几个独立区域，并且跟踪这些区域的垃圾收集进度，同时在后台维护一个优先级列表，每次根据所允许的收集时间，优先回收垃圾最多的区域。</p>
 
                           </div>
                         </div>
                         <div class="layout-post-social">
                           <div class="item reader">
-                            <div id="/post/bionioaio-zheng-li/" class="leancloud-visitors view"
-                              data-flag-title="BIO,NIO,AIO整理">
+                            <div id="/post/jvm-la-ji-shou-ji-qi/" class="leancloud-visitors view"
+                              data-flag-title=" jvm垃圾收集器">
                               <span class="post-meta-item-text">阅读 </span>
                               <span class="leancloud-visitors-count"></span>
                             </div>
@@ -186,8 +187,8 @@ AIO方式使用于连接数目多且连接比较长（重操作）的架构，�
                               <div class="card-content col-12">
                                 <div class="card-body">
                                   <div class="header">
-                                    <a href="https://esinew.github.io/post/suo-yin/" class="title">
-                                      <h4>索引</h4>
+                                    <a href="https://esinew.github.io/post/annotationconfigapplicationcontext-he-shi-li-hua-dui-xiang-de-diao-yong-fang-shi-de-qu-bie/" class="title">
+                                      <h4>AnnotationConfigApplicationContext和实例化对象的调用方式的区别</h4>
                                     </a>
                                   </div>
                                   <div class="inner">
@@ -198,7 +199,7 @@ AIO方式使用于连接数目多且连接比较长（重操作）的架构，�
                                 </div>
                                 <div class="card-footer">
                                   <div class="item"><span>上一篇</span></div>
-                                  <div class="item">2020-07-06</div>
+                                  <div class="item">2020-07-10</div>
                                 </div>
                               </div>
                               
@@ -206,14 +207,14 @@ AIO方式使用于连接数目多且连接比较长（重操作）的架构，�
 
                             <div class="post-card row">
                               
-                              <div class="card-content col-12">
+                              <div class="card-content col-8 col-md-9">
                                 <div class="card-body">
                                   <div class="header">
-                                    <a href="https://esinew.github.io/post/http11-he-http2-de-bi-jiao/" class="title">
-                                      <h4>http1.1和http2的比较</h4>
+                                    <a href="https://esinew.github.io/post/g1-shou-ji-qi-yu-zgc-shou-ji-qi/" class="title">
+                                      <h4>G1收集器与ZGC收集器</h4>
                                     </a>
                                   </div>
-                                  <div class="inner">
+                                  <div class="inner d-none d-sm-block">
                                     <div class="abstract">
                                       
                                     </div>
@@ -221,7 +222,13 @@ AIO方式使用于连接数目多且连接比较长（重操作）的架构，�
                                 </div>
                                 <div class="card-footer">
                                   <div class="item"><span>下一篇</span></div>
-                                  <div class="item">2020-06-30</div>
+                                  <div class="item">2020-07-09</div>
+                                </div>
+                              </div>
+                              <div class="card-thumb col-4 col-md-3">
+                                <div class="thumb">
+                                  <a href="https://esinew.github.io/post/g1-shou-ji-qi-yu-zgc-shou-ji-qi/"
+                                    style="background-image: url('https://esinew.github.io//post-images/g1-shou-ji-qi-yu-zgc-shou-ji-qi.png');"></a>
                                 </div>
                               </div>
                               
